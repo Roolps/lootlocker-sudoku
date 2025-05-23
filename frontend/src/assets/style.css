@@ -26,6 +26,7 @@
   
   --primary-background: #fff;
   --secondary-background: rgb(247, 245, 236);
+  --secondary-background-hover: rgb(242, 237, 212);
 
   --primary-text: #000;
   --secondary-text: rgba(0,0,0,.5);
@@ -35,6 +36,7 @@
   --font-mono: "Martian Mono", monospace;
 
   --accent-green: #1CE86D;
+  --accent-hover: #cdffe1;
 
   --accent: #FC9753;
   --accent-light: #ffbc8f;
@@ -136,8 +138,10 @@ h1{
   flex-wrap: wrap;
 }
 .cell.pencil-cell .pencil{
+  height: 1rem;
   width: 33%;
   font-size: .6rem;
+  display: inline-block;
   line-height: 1rem;
   color: var(--tertiary-text);
 }
@@ -150,13 +154,15 @@ h1{
   width: 3.5rem;
   height: 3.5rem;
   border-radius: 50%;
+  cursor: pointer;
+  transition: background-color .2s, opacity .2s, color .2s;
 }
 .num-btn.active{
   font-weight: 500;
   color: #fff;
   background-color: var(--accent);
 }
-.num-btn.locked::before{
+.num-btn::before{
   content: "";
   display: block;
   position: absolute;
@@ -169,10 +175,20 @@ h1{
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
+  opacity: 0;
+  transition: opacity .2s;
 }
+.num-btn.locked::before{
+  opacity: 1;
+}
+
+
 .num-btn.dimmed{
   opacity: .15;
   pointer-events: none;
+}
+.num-btn:hover{
+  background-color: var(--secondary-background-hover);
 }
 /* .num-btn.locked::after{
   content: "You can't edit this";
@@ -186,7 +202,7 @@ h1{
   font-weight: 500;
   font-family: var(--font-main);
   opacity: 0;
-  transition: top .3s, opacity .3s;
+  transition: top .2s, opacity .2s;
 }
 .num-btn.locked:hover::after{
   top: -2rem;
@@ -197,6 +213,7 @@ h1{
   margin-bottom: .5rem;
 }
 .action-btn{
+  cursor: pointer;
   position: relative;
   width: 3.5rem;
   height: 3.5rem;
@@ -204,7 +221,7 @@ h1{
   background-color: var(--accent-green);
   border: 2px var(--accent-green) solid;
   margin: 0 2px;
-  transition: background-color .3s;
+  transition: background-color .2s;
 }
 .action-btn::after{
   content: "";
@@ -217,7 +234,7 @@ h1{
   background-repeat: no-repeat;
   background-size: 45%;
   background-position: center;
-  transition: filter .3s;
+  transition: filter .2s;
 }
 .action-btn.edit::after{
   background-image: url(./media/buttons/edit.svg);
@@ -235,10 +252,10 @@ h1{
   background-image: url(./media/buttons/hint.svg);
 }
 .action-btn:hover{
-  background-color: transparent;
+  background-color: var(--accent-hover);
 }
-.action-btn:hover::after{
-  filter: invert(0);
+.action-btn.active{
+  background-color: transparent;
 }
 
 

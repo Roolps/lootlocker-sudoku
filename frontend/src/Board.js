@@ -1,4 +1,4 @@
-export function Board({ gameState, selection, onCellClick, onNumberButtonClick, onActionButtonClick }) {
+export function Board({ gameState, pencilState, selection, onCellClick, onNumberButtonClick, onActionButtonClick }) {
     let highlightValue = "row" in selection && "col" in selection && "value" in gameState[selection.row][selection.col] ? gameState[selection.row][selection.col].value : 0;
 
     let boardElements = [];
@@ -68,7 +68,7 @@ export function Board({ gameState, selection, onCellClick, onNumberButtonClick, 
             }
 
             let cellName = `Cell-${i}-${j}`;
-            
+
             if (Number.isInteger(value)) {
                 numberTotals[value] = (Number(numberTotals[value]) || 0) + 1;
             }
@@ -100,7 +100,7 @@ export function Board({ gameState, selection, onCellClick, onNumberButtonClick, 
                 {[...Array(9)].map((_, i) => {
                     const isActive = (i + 1) === highlightValue;
                     const isLocked = isActive && immutable;
-                    const isDimmed = !isActive && (immutable || numberTotals[i+1] === 9);
+                    const isDimmed = !isActive && (immutable || numberTotals[i + 1] === 9);
 
                     return (
                         <button
@@ -113,9 +113,12 @@ export function Board({ gameState, selection, onCellClick, onNumberButtonClick, 
                 })}
             </div>
             <div id="action-btns" className="flex row">
-                {["edit", "erase", "hint", "pencil", "undo"].map((key, i) => (
-                    <button key={i} className={`action-btn ${key}`} onClick={() => onActionButtonClick(key)}></button>
-                ))}
+                {["edit", "erase", "hint", "pencil", "undo"].map((key, i) => {
+                    if (key == "pencil" && pencilState) {
+                        return <button key={i} className={`action-btn ${key} active`} onClick={() => onActionButtonClick(key)}></button>
+                    }
+                    return <button key={i} className={`action-btn ${key}`} onClick={() => onActionButtonClick(key)}></button>
+                })}
             </div>
         </div>
     );
