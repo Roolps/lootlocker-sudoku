@@ -1,5 +1,4 @@
 export function Board({ gameState, selection, onCellClick }) {
-
     let highlightValue = "row" in selection && "col" in selection && "value" in gameState[selection.row][selection.col] ? gameState[selection.row][selection.col].value : 0;
 
     let boardElements = [];
@@ -63,17 +62,34 @@ export function Board({ gameState, selection, onCellClick }) {
         boardElements.push(<div className="flex row" key={rowName}>{rowElements}</div>)
     });
 
-    console.log(highlightValue)
+    var immutable = false
+    if (
+        Array.isArray(gameState) &&
+        Number.isInteger(selection.row) &&
+        Number.isInteger(selection.col) &&
+        selection.row >= 0 &&
+        selection.col >= 0 &&
+        selection.row < gameState.length &&
+        selection.col < (gameState[selection.row]?.length || 0)
+    ) {
+        // set immutable to whether the current selection is mutable or not
+        immutable = !!gameState[selection.row][selection.col]?.immutable;
+    }
 
     return (
         <div className="flex column align-center">
             <div className="cells flex column">{boardElements}</div>
             <div id="num-btns" className="flex row">
-                {[...Array(9)].map((_, i) => (
-                    <button key={i} className={`num-btn ${i + 1 === highlightValue ? 'active' : ''}`}>
-                        {i + 1}
-                    </button>
-                ))}
+                {[...Array(9)].map((_, i) => {
+                    const isActive = (i + 1) === highlightValue;
+                    return (
+                        <button
+                            key={i}
+                            className={`num-btn ${isActive ? 'active' : ''} ${isActive && immutable ? 'locked' : ''}`}>
+                            {i + 1}
+                        </button>
+                    )
+                })}
             </div>
             <div id="action-btns" className="flex row">
                 {["edit", "erase", "hint", "pencil", "undo"].map((key, i) => (

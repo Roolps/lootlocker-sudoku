@@ -27,7 +27,7 @@ export default function Sudoku() {
         
         <Board gameState={sampleGame} selection={selection} onCellClick={handleClick} />
 
-        <p id="powered-by-lootlocker">Powered by Lootlocker's free plan</p>
+        <a id="powered-by-lootlocker" href="https://lootlocker.com/" target="_blank">Made using <span>Lootlocker</span></a>
       </div>
     </div>
   );
