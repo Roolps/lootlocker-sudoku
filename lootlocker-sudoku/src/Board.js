@@ -31,11 +31,12 @@ export function Board({ gameState, selection, onCellClick }) {
                 classes += " border-left"
             }
 
-            if (selection.row === i) {
-                classes += " cross";
-            }
-
-            if (selection.col === j) {
+            if (
+                selection.row === i ||
+                selection.col === j ||
+                (Math.floor(i / 3) === Math.floor(selection.row / 3) &&
+                    Math.floor(j / 3) === Math.floor(selection.col / 3))
+            ) {
                 classes += " cross";
             }
 
