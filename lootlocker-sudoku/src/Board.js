@@ -1,4 +1,4 @@
-export function Board({ gameState, selection, onCellClick }) {
+export function Board({ gameState, selection, onCellClick, onNumberButtonClick, onActionButtonClick }) {
     let highlightValue = "row" in selection && "col" in selection && "value" in gameState[selection.row][selection.col] ? gameState[selection.row][selection.col].value : 0;
 
     let boardElements = [];
@@ -86,7 +86,8 @@ export function Board({ gameState, selection, onCellClick }) {
                     return (
                         <button
                             key={i}
-                            className={`num-btn ${isActive ? 'active' : ''} ${isActive && immutable ? 'locked' : ''}`}>
+                            className={`num-btn ${isActive ? 'active' : ''} ${isActive && immutable ? 'locked' : ''}`}
+                            onClick={() => onNumberButtonClick(i)}>
                             {i + 1}
                         </button>
                     )
@@ -94,7 +95,7 @@ export function Board({ gameState, selection, onCellClick }) {
             </div>
             <div id="action-btns" className="flex row">
                 {["edit", "erase", "hint", "pencil", "undo"].map((key, i) => (
-                    <button key={i} className={`action-btn ${key}`}></button>
+                    <button key={i} className={`action-btn ${key}`} onClick={() => onActionButtonClick(key)}></button>
                 ))}
             </div>
         </div>
