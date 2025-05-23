@@ -1,5 +1,7 @@
 import { Board } from "./Board"
-import { useState } from "react";
+import { Timer } from "./Timer"
+
+import { useState, useEffect } from 'react';
 
 export default function Sudoku() {
   const sampleGame = [[{ "pencil": [1, 0, 0, 0, 1, 0, 0, 1, 1] }, { "value": 1, "immutable": true }, { "value": 2, "immutable": true }, {}, { "value": 5, "immutable": true }, {}, {}, {}, {}],
@@ -38,9 +40,9 @@ export default function Sudoku() {
       if (!cell.pencil || !Array.isArray(cell.pencil)) {
         cell.pencil = Array(9).fill(0);
       }
-      if(cell.pencil[number]){
+      if (cell.pencil[number]) {
         cell.pencil[number] = 0
-      }else{
+      } else {
         cell.pencil[number] = 1
       }
     } else {
@@ -94,6 +96,11 @@ export default function Sudoku() {
     <div className="container flex row align-center justify-center">
       <div className="board flex column align-center">
         <h1>Lootlocker Sudoku</h1>
+
+        <div id="timer-row" className="flex row space-between">
+          <p id="player-tokens" className="flex align-center">1042</p>
+          <Timer />
+        </div>
 
         <Board gameState={gameState} pencilState={pencilState} selection={selection} onCellClick={handleClick} onNumberButtonClick={handleNumberClick} onActionButtonClick={handleActionButton} />
 

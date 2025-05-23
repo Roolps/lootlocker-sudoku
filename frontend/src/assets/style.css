@@ -71,14 +71,46 @@ body{
   justify-content: center;
 }
 
+.space-between{
+  width: 100%;
+  justify-content: space-between;
+}
+
 
 
 h1{
-  margin: 0 0 1.5rem;
+  margin: 0;
   font-family: var(--font-main);
   font-weight: 600;
   font-size: 2.4rem;
 }
+#timer-row{
+  width: 27.5rem;
+  margin: 1rem 0 .5rem;
+}
+#player-tokens,
+#timer{
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: 400;
+  color: var(--secondary-text);
+}
+/* #timer::after,
+#player-tokens::before{
+  content: "";
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: .3rem;
+  background-image: url(media/icons/coins.svg);
+  opacity: .5;
+}
+#timer::after{
+  margin-right: 0;
+  margin-left: .3rem;
+  background-image: url(media/icons/pause.svg);
+} */
+
 
 .container{
   width: 100%;
@@ -151,11 +183,14 @@ h1{
 .num-btn{
   position: relative;
   font-size: 1rem;
-  width: 3.5rem;
-  height: 3.5rem;
+  /* width: 3.5rem;
+  height: 3.5rem; */
   border-radius: 50%;
   cursor: pointer;
   transition: background-color .2s, opacity .2s, color .2s;
+}
+.num-btn:hover{
+  background-color: var(--secondary-background-hover);
 }
 .num-btn.active{
   font-weight: 500;
@@ -187,27 +222,7 @@ h1{
   opacity: .15;
   pointer-events: none;
 }
-.num-btn:hover{
-  background-color: var(--secondary-background-hover);
-}
-/* .num-btn.locked::after{
-  content: "You can't edit this";
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  font-size: .8rem;
-  color: black;
-  top: 0;
-  font-weight: 500;
-  font-family: var(--font-main);
-  opacity: 0;
-  transition: top .2s, opacity .2s;
-}
-.num-btn.locked:hover::after{
-  top: -2rem;
-  opacity: 1;
-} */
+
 
 #num-btns{
   margin-bottom: .5rem;
@@ -215,8 +230,8 @@ h1{
 .action-btn{
   cursor: pointer;
   position: relative;
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
   background-color: var(--accent-green);
   border: 2px var(--accent-green) solid;
