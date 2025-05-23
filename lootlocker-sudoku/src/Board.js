@@ -3,7 +3,10 @@ export function Board({ gameState, selection, onCellClick, onNumberButtonClick, 
 
     let boardElements = [];
 
-    var totals = {}
+    const numberTotals = {};
+    for (let i = 1; i <= 9; i++) {
+        numberTotals[i] = 0;
+    }
 
     // loop through each row of the game's state
     gameState.forEach((row, i) => {
@@ -65,6 +68,11 @@ export function Board({ gameState, selection, onCellClick, onNumberButtonClick, 
             }
 
             let cellName = `Cell-${i}-${j}`;
+            
+            if (Number.isInteger(value)) {
+                numberTotals[value] = (Number(numberTotals[value]) || 0) + 1;
+            }
+
             rowElements.push(<button className={classes} key={cellName} onClick={() => onCellClick(i, j)}>{value}</button>);
         });
         const rowName = `Row-${i}`
@@ -92,7 +100,7 @@ export function Board({ gameState, selection, onCellClick, onNumberButtonClick, 
                 {[...Array(9)].map((_, i) => {
                     const isActive = (i + 1) === highlightValue;
                     const isLocked = isActive && immutable;
-                    const isDimmed = !isActive && immutable;
+                    const isDimmed = !isActive && (immutable || numberTotals[i+1] === 9);
 
                     return (
                         <button
