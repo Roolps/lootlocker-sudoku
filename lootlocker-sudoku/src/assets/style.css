@@ -28,7 +28,8 @@
   --secondary-background: rgb(247, 245, 236);
 
   --primary-text: #000;
-  --secondary-text: #888;
+  --secondary-text: rgba(0,0,0,.5);
+  --tertiary-text: rgba(0,0,0,.25);
 
   --font-main: "Circular Std", Arial, Helvetica, Sans-Serif;
   --font-mono: "Martian Mono", monospace;
@@ -84,7 +85,7 @@ h1{
 
 .cells{
   margin-bottom: 3rem;
-  border-radius: 1.5rem;
+  border-radius: 1rem;
   overflow: hidden;
 }
 .cell,
@@ -116,6 +117,7 @@ h1{
 }
 
 
+
 .cell.active{
   background-color: var(--accent-light);
   color: #fff;
@@ -128,6 +130,19 @@ h1{
   color: #fff;
   font-weight: 500;
 }
+
+
+.cell.pencil-cell{
+  flex-wrap: wrap;
+}
+.cell.pencil-cell .pencil{
+  width: 33%;
+  font-size: .6rem;
+  line-height: 1rem;
+  color: var(--tertiary-text);
+}
+
+
 
 .num-btn{
   position: relative;
@@ -148,12 +163,16 @@ h1{
   width: 1.5rem;
   height: 1.5rem;
   left: 50%;
-  top: -1rem;
+  top: -1.5rem;
   transform: translateX(-50%);
   background-image: url(media/icons/lock.svg);
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
+}
+.num-btn.dimmed{
+  opacity: .15;
+  pointer-events: none;
 }
 /* .num-btn.locked::after{
   content: "You can't edit this";

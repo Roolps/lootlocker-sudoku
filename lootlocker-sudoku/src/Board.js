@@ -3,6 +3,8 @@ export function Board({ gameState, selection, onCellClick, onNumberButtonClick, 
 
     let boardElements = [];
 
+    var totals = {}
+
     // loop through each row of the game's state
     gameState.forEach((row, i) => {
         var rowElements = []
@@ -40,7 +42,7 @@ export function Board({ gameState, selection, onCellClick, onNumberButtonClick, 
                 classes += " cross";
             }
 
-            if ('value' in cell) {
+            if ("value" in cell) {
                 value = cell.value;
                 if (value === highlightValue) {
                     classes += " active";
@@ -51,10 +53,16 @@ export function Board({ gameState, selection, onCellClick, onNumberButtonClick, 
                 }
             }
 
-            // if ('pencil' in cell) {
-            //     classes += " pencil";
-            //     value = <PencilMark marks={cell.pencil}></PencilMark>;
-            // }
+            if ("pencil" in cell) {
+                classes += " pencil-cell flex space-between";
+
+                value = [...Array(9)].map((_, k) => {
+                    const key = `Pencil-${i}-${j}-${k}`
+                    const mark = cell.pencil[k]
+
+                    return <span className="pencil" key={key} position={k + 1}>{mark ? (k + 1) : ""}</span>
+                });
+            }
 
             let cellName = `Cell-${i}-${j}`;
             rowElements.push(<button className={classes} key={cellName} onClick={() => onCellClick(i, j)}>{value}</button>);
@@ -83,10 +91,13 @@ export function Board({ gameState, selection, onCellClick, onNumberButtonClick, 
             <div id="num-btns" className="flex row">
                 {[...Array(9)].map((_, i) => {
                     const isActive = (i + 1) === highlightValue;
+                    const isLocked = isActive && immutable;
+                    const isDimmed = !isActive && immutable;
+
                     return (
                         <button
                             key={i}
-                            className={`num-btn ${isActive ? 'active' : ''} ${isActive && immutable ? 'locked' : ''}`}
+                            className={`num-btn ${isActive ? 'active' : ''} ${isLocked ? 'locked' : ''} ${isDimmed ? 'dimmed' : ''}`}
                             onClick={() => onNumberButtonClick(i)}>
                             {i + 1}
                         </button>
