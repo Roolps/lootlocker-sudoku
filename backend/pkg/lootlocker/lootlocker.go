@@ -2,6 +2,7 @@ package lootlocker
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -54,7 +55,15 @@ func (c *Client) Request(method, endpoint, contentType string, body []byte, head
 	return nil, err
 }
 
+type response struct {
+	Error   string `json:"error"`
+	Message string `json:"message"`
+}
+
 func extractError(code int, raw []byte) error {
-	log.Println(string(raw))
-	return nil
+	res := &response{}
+	if err := json.Unmarshal(raw, res); err != nil {
+		return fmt.Errorf("failed to unmarshal json body of request with status %v", code)
+	}
+	return fmt.Errorf("%v: %v (%v)", code, res.Message, res.Error)
 }

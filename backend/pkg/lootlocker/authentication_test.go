@@ -16,3 +16,15 @@ func TestAuthenticationEndpoint(t *testing.T) {
 	}
 	log.Println(login)
 }
+
+func TestWhiteLabelLoginEndpoint(t *testing.T) {
+	c := &Client{
+		DomainKey:     "",
+		IsDevelopment: true,
+	}
+	token, err := c.LoginWhiteLabelUser("example@example.com", "testingPassword", true)
+	if err != nil {
+		t.Error(err)
+	}
+	log.Println(token)
+}
