@@ -1,4 +1,4 @@
-export function Board({gameState, selection, onCellClick}) {
+export function Board({ gameState, selection, onCellClick }) {
 
     let highlightValue = "row" in selection && "col" in selection && "value" in gameState[selection.row][selection.col] ? gameState[selection.row][selection.col].value : 0;
 
@@ -39,7 +39,7 @@ export function Board({gameState, selection, onCellClick}) {
             if (selection.col === j) {
                 classes += " cross";
             }
-            
+
             if ('value' in cell) {
                 value = cell.value;
                 if (value === highlightValue) {
@@ -48,20 +48,38 @@ export function Board({gameState, selection, onCellClick}) {
             } else {
                 if (selection.row === i && selection.col === j) {
                     classes += " active";
-                }                
+                }
             }
 
             // if ('pencil' in cell) {
             //     classes += " pencil";
             //     value = <PencilMark marks={cell.pencil}></PencilMark>;
             // }
-            
+
             let cellName = `Cell-${i}-${j}`;
-            rowElements.push(<button className={classes} key={cellName} onClick={() => onCellClick(i,j)}>{value}</button>);
+            rowElements.push(<button className={classes} key={cellName} onClick={() => onCellClick(i, j)}>{value}</button>);
         });
         const rowName = `Row-${i}`
         boardElements.push(<div className="flex row" key={rowName}>{rowElements}</div>)
     });
 
-    return (<div className="cells flex column">{boardElements}</div>);
+    console.log(highlightValue)
+
+    return (
+        <div className="flex column align-center">
+            <div className="cells flex column">{boardElements}</div>
+            <div id="num-btns" className="flex row">
+                {[...Array(9)].map((_, i) => (
+                    <button key={i} className={`num-btn ${i + 1 === highlightValue ? 'active' : ''}`}>
+                        {i + 1}
+                    </button>
+                ))}
+            </div>
+            <div id="action-btns" className="flex row">
+                {["edit", "erase", "hint", "pencil", "undo"].map((key, i) => (
+                    <button key={i} className={`action-btn ${key}`}></button>
+                ))}
+            </div>
+        </div>
+    );
 }

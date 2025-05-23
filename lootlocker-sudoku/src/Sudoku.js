@@ -17,26 +17,17 @@ export default function Sudoku() {
   
   
   function handleClick(i, j) {
+      setSelection({ row: i, col: j });
   }
 
   return (
     <div className="container flex row align-center justify-center">
       <div className="board flex column align-center">        
-        <h1>Roolps Sudoku</h1>
+        <h1>Lootlocker Sudoku</h1>
+        
         <Board gameState={sampleGame} selection={selection} onCellClick={handleClick} />
 
-        <div id="num-btns" className="flex row">
-          {[...Array(9)].map((_, i) => (
-            <button key={i} className={`num-btn ${i === 0 ? 'special' : ''}`}>
-              {i + 1}
-            </button>
-          ))}
-        </div>
-        <div id="action-btns" className="flex row">
-            {["edit", "erase", "hint", "pencil", "undo"].map((key, i) => (
-              <button key={i} className={`action-btn ${key}`}></button>
-            ))}
-        </div>
+        <p id="powered-by-lootlocker">Powered by Lootlocker's free plan</p>
       </div>
     </div>
   );
