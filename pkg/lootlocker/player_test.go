@@ -11,6 +11,23 @@ func TestUpdateStorageEndpoint(t *testing.T) {
 		DomainKey:     "",
 		IsDevelopment: true,
 	}
+	err := c.UpdatePlayerStorage("", []PlayerData{
+		{
+			Key:   "testing",
+			Value: ``,
+			Order: "1",
+		},
+	})
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestGetPlayerStorage(t *testing.T) {
+	c := &Client{
+		DomainKey:     "",
+		IsDevelopment: true,
+	}
 	data, err := c.GetPlayerStorage("")
 	if err != nil {
 		t.Error(err)

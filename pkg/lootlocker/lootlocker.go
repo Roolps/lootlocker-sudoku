@@ -3,6 +3,7 @@ package lootlocker
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -16,6 +17,10 @@ type Client struct {
 
 const (
 	application_json = "application/json"
+)
+
+var (
+	ErrForbidden error = errors.New("forbidden")
 )
 
 func (c *Client) Request(method, endpoint, contentType string, body []byte, headers map[string]string) ([]byte, error) {
@@ -53,6 +58,9 @@ func (c *Client) Request(method, endpoint, contentType string, body []byte, head
 	// API request succeeded
 	if res.StatusCode >= 200 && res.StatusCode < 300 {
 		return raw, nil
+	}
+	if res.StatusCode == http.StatusForbidden {
+		return nil, ErrForbidden
 	}
 	err = extractError(res.StatusCode, raw)
 	return nil, err
