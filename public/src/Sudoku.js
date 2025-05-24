@@ -29,7 +29,7 @@ export default function Sudoku() {
       const data = await response.json();
       setAuthenticated(true);
       setGameState(data);
-      
+
     } catch (error) {
       console.error(error.message);
     }
@@ -129,22 +129,22 @@ export default function Sudoku() {
               />
             )}
             {!gameState && <div className="error-message">An error occurred loading the game board.</div>}
-
-            <a id="powered-by-lootlocker" href="https://lootlocker.com/" target="_blank">Made using <span>Lootlocker</span></a>
           </>
           ) : (
-            <form>
+            <form className="flex column align-center">
               <label>
-                Email
-                <input type="text" placeholder="-" />
+                Email<br></br>
+                <input className="input-field" type="text" placeholder="-" />
               </label>
               <label>
-                Password
-                <input type="text" placeholder="-" />
+                Password<br></br>
+                <input className="input-field" type="password" placeholder="-" />
               </label>
-              <button type="submit">Submit</button>
+              <button className="btn-solid" type="submit">Submit</button>
             </form>
           )}
+
+          <a id="powered-by-lootlocker" href="https://lootlocker.com/" target="_blank">Made using <span>Lootlocker</span></a>
       </div>
     </div>
   );

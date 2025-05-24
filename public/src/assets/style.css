@@ -36,6 +36,7 @@
   --font-mono: "Martian Mono", monospace;
 
   --accent-green: #1CE86D;
+  --accent-green-dark: #1E905D;
   --accent-hover: #cdffe1;
 
   --accent: #FC9753;
@@ -285,4 +286,46 @@ h1{
 #powered-by-lootlocker span{
   color: var(--accent-green);
   font-weight: 400;
+}
+
+
+form{
+  margin-top: 3rem;
+}
+form label{
+  margin-bottom: 1rem;
+}
+.input-field{
+  width: 24rem;
+  padding: .9rem 1.2rem;
+  border: none;
+  background-color: var(--secondary-background);
+  margin-top: .3rem;
+  font-weight: 300;
+  font-family: inherit;
+  font-size: .9rem;
+  border-bottom: 2px var(--secondary-background-hover) solid;
+  border-radius: .3rem .3rem 0 0;
+  transition: background-color .2s, border-color .2s;
+}
+.input-field:focus{
+  background-color: var(--secondary-background-hover);
+  outline: none;
+  border-color: var(--accent-green);
+}
+.btn-solid{
+  cursor: pointer;
+  width: 100%;
+  padding: .9rem;
+  background-color: var(--accent-green);
+  color: var(--accent-green-dark);
+  border: none;
+  font-family: inherit;
+  border-radius: 3rem;
+  margin-top: 1rem;
+  border: 2px var(--accent-green) solid;
+  transition: background-color .2s;
+}
+.btn-solid:hover{
+  background-color: transparent;
 }
