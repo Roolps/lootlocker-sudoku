@@ -10,6 +10,7 @@ import (
 
 type Client struct {
 	DomainKey     string
+	GameKey       string
 	IsDevelopment bool
 }
 
@@ -34,6 +35,10 @@ func (c *Client) Request(method, endpoint, contentType string, body []byte, head
 	req.Header.Add("Content-Type", contentType)
 	req.Header.Add("is-development", fmt.Sprint(c.IsDevelopment))
 	req.Header.Add("domain-key", c.DomainKey)
+
+	for key, val := range headers {
+		req.Header.Add(key, val)
+	}
 
 	res, err := client.Do(req)
 	if err != nil {

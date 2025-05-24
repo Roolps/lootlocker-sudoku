@@ -28,3 +28,23 @@ func TestWhiteLabelLoginEndpoint(t *testing.T) {
 	}
 	log.Println(token)
 }
+
+func TestStartWhiteLabelSession(t *testing.T) {
+	c := &Client{
+		DomainKey:     "",
+		IsDevelopment: true,
+		GameKey:       "",
+	}
+	email := "example@example.com"
+
+	token, err := c.LoginWhiteLabelUser(email, "testingPassword", true)
+	if err != nil {
+		t.Error(err)
+	}
+
+	sess, err := c.StartWhiteLabelSession(email, token, "1.0")
+	if err != nil {
+		t.Error(err)
+	}
+	log.Println(sess)
+}

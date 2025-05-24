@@ -71,3 +71,34 @@ func (c *Client) VerifyWhiteLabelSession(email, token string) (bool, error) {
 	}
 	return true, nil
 }
+
+type GameSession struct {
+	Success      bool   `json:"success"`
+	SessionToken string `json:"session_token"`
+
+	PlayerID        int       `json:"player_id"`
+	PublicUID       string    `json:"public_uid"`
+	PlayerCreatedAt time.Time `json:"player_created_at"`
+
+	CheckGrantNotifications        bool `json:"check_grant_notifications"`
+	CheckDeactivationNotifications bool `json:"check_deactivation_notifications"`
+	SeenBefore                     bool `json:"seen_before"`
+}
+
+// https://api.lootlocker.com/game/v2/session/white-label
+
+func (c *Client) StartWhiteLabelSession(email, token, gameVersion string) (*GameSession, error) {
+	raw, err := json.Marshal(map[string]any{"game_key": c.GameKey, "email": email, "token": token, "game_version": gameVersion})
+	if err != nil {
+		return nil, err
+	}
+	raw, err = c.Request(http.MethodPost, "game/v2/session/white-label", application_json, raw, nil)
+	if err != nil {
+		return nil, err
+	}
+	sess := &GameSession{}
+	if err := json.Unmarshal(raw, sess); err != nil {
+		return nil, err
+	}
+	return sess, nil
+}
