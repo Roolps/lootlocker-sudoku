@@ -11,38 +11,33 @@ import (
 
 type session struct {
 	LoggedIn bool
-	Token    string
+
+	PlayerID string
 	Email    string
+	Token    string
 }
 
 func (s *session) get(r *http.Request) error {
-	c, err := r.Cookie("session")
+	sessionCookie, err := r.Cookie("session")
 	if err == http.ErrNoCookie {
 		return nil
 	}
 	if err != nil {
 		return err
 	}
-	return s.verify(c)
+	return s.verify(sessionCookie)
 }
 
 func (s *session) verify(c *http.Cookie) error {
 	// c.value will be in the format of email:token
 	cookieval := strings.Split(c.Value, ":")
-	if len(cookieval) != 2 {
+	if len(cookieval) != 3 {
 		return nil
 	}
-	valid, err := lootlockerClient.VerifyWhiteLabelSession(cookieval[0], cookieval[1])
-	if err != nil {
-		// to do: make a lootlocker const for the authentication details are wrong vs internal server error
-		return nil
-	}
-	if valid {
-		// valid login session - set the values in session
-		s.LoggedIn = true
-		s.Email = cookieval[0]
-		s.Token = cookieval[1]
-	}
+	s.LoggedIn = true
+	s.PlayerID = cookieval[0]
+	s.Email = cookieval[1]
+	s.Token = cookieval[2]
 	return nil
 }
 
@@ -68,12 +63,26 @@ func (s *session) login(w http.ResponseWriter, r *http.Request) {
 		respond(http.StatusNotAcceptable, "invalid username or password", nil, w)
 		return
 	}
+
+	// start white label session using the token
+	gameSession, err := lootlockerClient.StartWhiteLabelSession(ul.Email, token, "1.0")
+	if err != nil {
+		respond(http.StatusInternalServerError, err.Error(), nil, w)
+		return
+	}
+
+	sessionInfo, err := lootlockerClient.GetInfoFromSession(gameSession.SessionToken)
+	if err != nil {
+		respond(http.StatusInternalServerError, err.Error(), nil, w)
+		return
+	}
+
 	c := &http.Cookie{
 		Name:     "session",
-		Value:    fmt.Sprintf("%v:%v", ul.Email, token),
+		Value:    fmt.Sprintf("%v:%v:%v", sessionInfo.ID, ul.Email, gameSession.SessionToken),
 		Path:     "/",
 		Domain:   origin,
-		Expires:  time.Now().Add(time.Hour * 24 * 30),
+		Expires:  time.Now().AddDate(20, 0, 0),
 		Secure:   true,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,

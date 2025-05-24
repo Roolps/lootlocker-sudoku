@@ -21,6 +21,7 @@ var (
 func New(loggerprofile *logging.Profile, workingdir string, env map[string]string) {
 	// set up lootlocker client
 	lootlockerClient.DomainKey = env["LOOTLOCKER_DOMAIN_KEY"]
+	lootlockerClient.GameKey = env["LOOTLOCKER_GAME_KEY"]
 
 	// to do: make this dynamic based on if env says dev mode or not
 	lootlockerClient.IsDevelopment = true

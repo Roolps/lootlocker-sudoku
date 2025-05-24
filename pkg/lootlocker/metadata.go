@@ -17,15 +17,18 @@ type Metadata struct {
 }
 
 type MetadataType string
+type MetadataSource string
 
 const (
 	MetadataTypeJSON MetadataType = "json"
+
+	MetadataSourcePlayer MetadataSource = "player"
 )
 
 // https://api.lootlocker.com/game/metadata/source/{source}/id/{source_id}
 // source can be self, player, reward, currency...
 
-func (c *Client) ListMetadata(source, sourceID, token string) (map[string]Metadata, error) {
+func (c *Client) ListMetadata(source MetadataSource, sourceID, token string) (map[string]Metadata, error) {
 	raw, err := c.Request(http.MethodGet, fmt.Sprintf("game/metadata/source/%v/id/%v", source, sourceID), application_json, nil, map[string]string{"x-session-token": token})
 	if err != nil {
 		return nil, err
