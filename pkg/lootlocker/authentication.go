@@ -56,3 +56,18 @@ func (c *Client) LoginWhiteLabelUser(email, password string, rememberMe bool) (s
 	}
 	return login.SessionToken, nil
 }
+
+// https://api.lootlocker.com/white-label-login/verify-session
+// returns true/false for if the session is valid
+
+func (c *Client) VerifyWhiteLabelSession(email, token string) (bool, error) {
+	raw, err := json.Marshal(map[string]any{"email": email, "token": token})
+	if err != nil {
+		return false, err
+	}
+	_, err = c.Request(http.MethodPost, "white-label-login/verify-session", application_json, raw, nil)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}

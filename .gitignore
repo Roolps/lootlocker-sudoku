@@ -1,6 +1,7 @@
 # dependencies
-frontend/node_modules
+public/node_modules
+public/build
 
-backend/.env
+.env
 
 .DS_Store
