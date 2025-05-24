@@ -4,25 +4,36 @@ import { Timer } from "./Timer"
 import { useState, useEffect } from 'react';
 
 export default function Sudoku() {
-
-  function fetchState() {
-    return [[{ "pencil": [1, 0, 0, 0, 1, 0, 0, 1, 1] }, { "value": 1, "immutable": true }, { "value": 2, "immutable": true }, {}, { "value": 5, "immutable": true }, {}, {}, {}, {}],
-    [{ "value": 9, "immutable": true }, {}, {}, {}, {}, { "value": 3, "immutable": true }, {}, { "value": 1, "immutable": true }, { "value": 4, "immutable": true }],
-    [{}, {}, {}, {}, {}, { "value": 8, "immutable": true }, { "value": 2, "immutable": true }, { "value": 3, "immutable": true }, {}],
-    [{}, {}, { "value": 1, "immutable": true }, {}, {}, {}, {}, { "value": 2, "immutable": true }, { "value": 6, "immutable": true }],
-    [{}, {}, {}, {}, {}, {}, {}, {}, {}],
-    [{ "value": 6, "immutable": true }, { "value": 5, "immutable": true }, {}, {}, {}, {}, { "value": 7, "immutable": true }, {}, {}],
-    [{}, { "value": 9, "immutable": true }, { "value": 7, "immutable": true }, { "value": 6, "immutable": true }, {}, {}, {}, {}, {}],
-    [{ "value": 5, "immutable": true }, { "value": 4, "immutable": true }, {}, { "value": 2, "immutable": true }, {}, {}, {}, {}, { "value": 1, "immutable": true }],
-    [{}, {}, {}, {}, { "value": 7, "immutable": true }, {}, { "value": 9, "immutable": true }, { "value": 5, "immutable": true }, {}]]
-  }
-
-  const [gameState, setGameState] = useState(fetchState);
+  const [gameState, setGameState] = useState(null);
   const [pencilState, setPencilMarks] = useState(false);
+
+  const [authenticated, setAuthenticated] = useState(false);
 
   const [selection, setSelection] = useState({ row: 0, col: 0 });
 
+  useEffect(() => {
+    fetchState();
+  }, []);
 
+  async function fetchState() {
+    try {
+      const response = await fetch("/api/state");
+
+      if (!response.ok) {
+        if (response.status === 403) {
+          setAuthenticated(false);
+        }
+        throw new Error(`Response status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setAuthenticated(true);
+      setGameState(data);
+      
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
 
   function handleClick(i, j) {
     setSelection({ row: i, col: j });
@@ -87,7 +98,7 @@ export default function Sudoku() {
   }
 
   function handlePencilAction() {
-    // toggle the value of the 
+    // toggle the value of the pencil mark state
     setPencilMarks(prev => !prev);
   }
 
@@ -100,14 +111,40 @@ export default function Sudoku() {
       <div className="board flex column align-center">
         <h1>Lootlocker Sudoku</h1>
 
-        <div id="timer-row" className="flex row space-between">
-          <p id="player-tokens" className="flex align-center">1042</p>
-          <Timer />
-        </div>
+        {authenticated ?
+          (<>
+            <div id="timer-row" className="flex row space-between">
+              <p id="player-tokens" className="flex align-center">1042</p>
+              <Timer />
+            </div>
 
-        <Board gameState={gameState} pencilState={pencilState} selection={selection} onCellClick={handleClick} onNumberButtonClick={handleNumberClick} onActionButtonClick={handleActionButton} />
+            {gameState && (
+              <Board
+                gameState={gameState}
+                pencilState={pencilState}
+                selection={selection}
+                onCellClick={handleClick}
+                onNumberButtonClick={handleNumberClick}
+                onActionButtonClick={handleActionButton}
+              />
+            )}
+            {!gameState && <div className="error-message">An error occurred loading the game board.</div>}
 
-        <a id="powered-by-lootlocker" href="https://lootlocker.com/" target="_blank">Made using <span>Lootlocker</span></a>
+            <a id="powered-by-lootlocker" href="https://lootlocker.com/" target="_blank">Made using <span>Lootlocker</span></a>
+          </>
+          ) : (
+            <form>
+              <label>
+                Email
+                <input type="text" placeholder="-" />
+              </label>
+              <label>
+                Password
+                <input type="text" placeholder="-" />
+              </label>
+              <button type="submit">Submit</button>
+            </form>
+          )}
       </div>
     </div>
   );

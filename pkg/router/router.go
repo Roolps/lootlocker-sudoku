@@ -37,6 +37,10 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 
 	if strings.HasPrefix(r.URL.Path, "/api") {
 		// execute api request
+		if !s.LoggedIn {
+			respond(http.StatusForbidden, "forbidden", w)
+			return
+		}
 		s.apiRequest(w, r)
 		return
 	}
