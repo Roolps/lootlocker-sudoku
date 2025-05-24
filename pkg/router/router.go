@@ -29,7 +29,7 @@ func New(loggerprofile *logging.Profile, workingdir string, env map[string]strin
 
 func Handle(w http.ResponseWriter, r *http.Request) {
 	s := &session{}
-	if err := s.get(w, r); err != nil {
+	if err := s.get(r); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
