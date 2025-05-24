@@ -14,6 +14,8 @@ var (
 
 	logger *logging.Profile
 	wd     string
+
+	origin string
 )
 
 func New(loggerprofile *logging.Profile, workingdir string, env map[string]string) {
@@ -25,6 +27,7 @@ func New(loggerprofile *logging.Profile, workingdir string, env map[string]strin
 
 	wd = workingdir
 	logger = loggerprofile
+	origin = env["ORIGIN"]
 }
 
 func Handle(w http.ResponseWriter, r *http.Request) {
@@ -37,11 +40,18 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 
 	if strings.HasPrefix(r.URL.Path, "/api") {
 		// execute api request
-		if !s.LoggedIn {
-			respond(http.StatusForbidden, "forbidden", w)
-			return
+		path := strings.ReplaceAll(r.URL.Path, "/api", "")
+		switch path {
+		case "/login":
+			s.login(w, r)
+
+		default:
+			if !s.LoggedIn {
+				respond(http.StatusForbidden, "forbidden", w)
+				return
+			}
+			s.apiRequest(w, r)
 		}
-		s.apiRequest(w, r)
 		return
 	}
 

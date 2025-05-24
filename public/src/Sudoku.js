@@ -106,6 +106,17 @@ export default function Sudoku() {
 
   }
 
+  async function login(formdata) {
+    const response = await fetch("/api/login", {
+      method: "POST",
+      body: JSON.stringify({email: formdata.get("email"), password: formdata.get("password")})
+    });
+
+    const data = await response.json()
+    console.log(data)
+    fetchState();
+  }
+
   return (
     <div className="container flex row align-center justify-center">
       <div className="board flex column align-center">
@@ -131,14 +142,14 @@ export default function Sudoku() {
             {!gameState && <div className="error-message">An error occurred loading the game board.</div>}
           </>
           ) : (
-            <form className="flex column align-center">
+            <form className="flex column align-center" action={login}>
               <label>
                 Email<br></br>
-                <input className="input-field" type="text" placeholder="-" />
+                <input className="input-field" name="email" type="text" placeholder="-" />
               </label>
               <label>
                 Password<br></br>
-                <input className="input-field" type="password" placeholder="-" />
+                <input className="input-field" name="password" type="password" placeholder="-" />
               </label>
               <button className="btn-solid" type="submit">Submit</button>
             </form>
