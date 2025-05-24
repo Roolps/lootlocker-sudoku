@@ -28,7 +28,7 @@ export default function Sudoku() {
 
       const data = await response.json();
       setAuthenticated(true);
-      setGameState(data);
+      setGameState(data["data"]);
 
     } catch (error) {
       console.error(error.message);

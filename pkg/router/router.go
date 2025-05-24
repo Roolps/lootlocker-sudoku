@@ -47,10 +47,10 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 
 		default:
 			if !s.LoggedIn {
-				respond(http.StatusForbidden, "forbidden", w)
+				respond(http.StatusForbidden, "forbidden", nil, w)
 				return
 			}
-			s.apiRequest(w, r)
+			s.apiRequest(path, w, r)
 		}
 		return
 	}

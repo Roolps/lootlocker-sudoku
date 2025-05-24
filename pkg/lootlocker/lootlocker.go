@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -32,7 +31,6 @@ func (c *Client) Request(method, endpoint, contentType string, body []byte, head
 		return nil, err
 	}
 
-	log.Println(string(body))
 	req.Header.Add("Content-Type", contentType)
 	req.Header.Add("is-development", fmt.Sprint(c.IsDevelopment))
 	req.Header.Add("domain-key", c.DomainKey)

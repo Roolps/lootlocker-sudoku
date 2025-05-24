@@ -54,18 +54,18 @@ type userlogin struct {
 func (s *session) login(w http.ResponseWriter, r *http.Request) {
 	raw, err := io.ReadAll(r.Body)
 	if err != nil {
-		respond(http.StatusNotAcceptable, fmt.Sprintf("failed to read request body: %v", err), w)
+		respond(http.StatusNotAcceptable, fmt.Sprintf("failed to read request body: %v", err), nil, w)
 		return
 	}
 	ul := &userlogin{}
 	if err := json.Unmarshal(raw, ul); err != nil {
-		respond(http.StatusInternalServerError, fmt.Sprintf("failed to unmarshal body: %v", err), w)
+		respond(http.StatusInternalServerError, fmt.Sprintf("failed to unmarshal body: %v", err), nil, w)
 		return
 	}
 	token, err := lootlockerClient.LoginWhiteLabelUser(ul.Email, ul.Password, true)
 	if err != nil {
 		// to do: add error constants to lootlocker package to check the actual error message
-		respond(http.StatusNotAcceptable, "invalid username or password", w)
+		respond(http.StatusNotAcceptable, "invalid username or password", nil, w)
 		return
 	}
 	c := &http.Cookie{
@@ -79,5 +79,5 @@ func (s *session) login(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteLaxMode,
 	}
 	http.SetCookie(w, c)
-	respond(http.StatusOK, "success", w)
+	respond(http.StatusOK, "success", nil, w)
 }
