@@ -290,6 +290,7 @@ h1{
 
 
 form{
+  position: relative;
   margin-top: 3rem;
 }
 form label{
@@ -328,4 +329,24 @@ form label{
 }
 .btn-solid:hover{
   background-color: transparent;
+}
+
+
+
+
+#form-loader{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--primary-background);
+  background-image: url(media/loading.svg);
+  background-repeat: no-repeat;
+  background-size: 20%;
+  background-position: 50% 30%;
+  transition: opacity .2s;
+}
+#form-loader.hidden{
+  opacity: 0;
 }

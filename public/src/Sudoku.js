@@ -13,6 +13,10 @@ export default function Sudoku() {
 
   useEffect(() => {
     fetchState();
+
+    setTimeout(() => {
+      document.getElementById("form-loader").classList.add("hidden")
+    }, 1000);
   }, []);
 
   async function fetchState() {
@@ -66,6 +70,17 @@ export default function Sudoku() {
         newGameState[selection.row][selection.col] = { value: number + 1, immutable: false };
       }
     }
+
+    fetch("/api/state", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newGameState),
+    }).catch((error) => {
+      // to do: make an error popup
+      console.log(error)
+    });
 
     setGameState(newGameState);
   }
@@ -125,7 +140,7 @@ export default function Sudoku() {
         {authenticated ?
           (<>
             <div id="timer-row" className="flex row space-between">
-              <p id="player-tokens" className="flex align-center">1042</p>
+              <p id="player-tokens" className="flex align-center">0</p>
               <Timer />
             </div>
 
@@ -152,6 +167,7 @@ export default function Sudoku() {
                 <input className="input-field" name="password" type="password" placeholder="-" />
               </label>
               <button className="btn-solid" type="submit">Submit</button>
+              <div id="form-loader"></div>
             </form>
           )}
 
