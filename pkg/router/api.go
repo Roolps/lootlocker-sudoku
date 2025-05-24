@@ -11,10 +11,13 @@ import (
 type apiresponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
-	Data    any    `json:"data,omitempty"`
+
+	Data any `json:"data,omitempty"`
 }
 
-func (s *session) apiRequest(path string, w http.ResponseWriter, r *http.Request) {
+func (s *session) apiRequest(path string, w http.ResponseWriter, r *http.Request) *apiresponse {
+	logger.Debugf("%s [%d] %s %s", r.Header.Get("X-Real-IP"), http.StatusOK, r.Method, r.URL.Path)
+	logger.Debug(path)
 	switch path {
 	// get the game state
 	case "/state":
@@ -35,26 +38,52 @@ func (s *session) apiRequest(path string, w http.ResponseWriter, r *http.Request
 				}
 				http.SetCookie(w, c)
 
-				respond(http.StatusForbidden, err.Error(), nil, w)
-			} else {
-				respond(http.StatusInternalServerError, err.Error(), nil, w)
+				return statusForbidden(err.Error())
 			}
-			return
+			return statusinternalservererror(err.Error())
 		}
 		if gameState, ok := metadata["current_state"]; ok {
-			respond(http.StatusOK, "success", gameState.Value, w)
+			return statusok(gameState.Value)
 		}
-		// otherwise respond "create new game..."
 
-	default:
-		respond(http.StatusOK, "golang backend working", nil, w)
+		// empty game :)
+		val := make([][]map[string]interface{}, 9)
+		for i := range val {
+			val[i] = make([]map[string]interface{}, 9)
+			for j := range val[i] {
+				val[i][j] = map[string]interface{}{}
+			}
+		}
+		return statusok(val)
 	}
 
-	logger.Debugf("%s [%d] %s %s", r.Header.Get("X-Real-IP"), http.StatusOK, r.Method, r.URL.Path)
+	return statusnotfound()
 }
 
-func respond(code int, message string, data any, w http.ResponseWriter) {
+// api outcomes
+
+func (r *apiresponse) Write(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(apiresponse{Code: code, Message: message, Data: data})
+	w.WriteHeader(r.Code)
+	return json.NewEncoder(w).Encode(r)
+}
+
+func statusnotfound() *apiresponse {
+	return &apiresponse{Code: http.StatusNotFound, Message: "not found"}
+}
+
+func statusForbidden(msg string) *apiresponse {
+	return &apiresponse{Code: http.StatusForbidden, Message: msg}
+}
+
+func statusinternalservererror(msg string) *apiresponse {
+	return &apiresponse{Code: http.StatusInternalServerError, Message: msg}
+}
+
+func statusnotacceptable(msg string) *apiresponse {
+	return &apiresponse{Code: http.StatusNotAcceptable, Message: msg}
+}
+
+func statusok(data any) *apiresponse {
+	return &apiresponse{Code: http.StatusOK, Message: "success", Data: data}
 }

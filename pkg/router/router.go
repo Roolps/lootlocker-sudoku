@@ -34,8 +34,9 @@ func New(loggerprofile *logging.Profile, workingdir string, env map[string]strin
 func Handle(w http.ResponseWriter, r *http.Request) {
 	s := &session{}
 	if err := s.get(r); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+		if err := statusinternalservererror(err.Error()).Write(w); err != nil {
+			logger.Error(err)
+		}
 		return
 	}
 
@@ -44,14 +45,21 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		path := strings.ReplaceAll(r.URL.Path, "/api", "")
 		switch path {
 		case "/login":
-			s.login(w, r)
+			if err := s.login(w, r).Write(w); err != nil {
+				logger.Error(err)
+			}
+			return
 
 		default:
 			if !s.LoggedIn {
-				respond(http.StatusForbidden, "forbidden", nil, w)
+				if err := statusForbidden("forbidden").Write(w); err != nil {
+					logger.Error(err)
+				}
 				return
 			}
-			s.apiRequest(path, w, r)
+			if err := s.apiRequest(path, w, r).Write(w); err != nil {
+				logger.Error(err)
+			}
 		}
 		return
 	}

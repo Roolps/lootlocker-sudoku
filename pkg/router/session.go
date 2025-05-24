@@ -35,6 +35,7 @@ func (s *session) verify(c *http.Cookie) error {
 		return nil
 	}
 	s.LoggedIn = true
+
 	s.PlayerID = cookieval[0]
 	s.Email = cookieval[1]
 	s.Token = cookieval[2]
@@ -46,35 +47,30 @@ type userlogin struct {
 	Password string `json:"password"`
 }
 
-func (s *session) login(w http.ResponseWriter, r *http.Request) {
+func (s *session) login(w http.ResponseWriter, r *http.Request) *apiresponse {
 	raw, err := io.ReadAll(r.Body)
 	if err != nil {
-		respond(http.StatusNotAcceptable, fmt.Sprintf("failed to read request body: %v", err), nil, w)
-		return
+		return statusnotacceptable(fmt.Sprintf("failed to read request body: %v", err))
 	}
 	ul := &userlogin{}
 	if err := json.Unmarshal(raw, ul); err != nil {
-		respond(http.StatusInternalServerError, fmt.Sprintf("failed to unmarshal body: %v", err), nil, w)
-		return
+		return statusinternalservererror(fmt.Sprintf("failed to unmarshal body: %v", err))
 	}
 	token, err := lootlockerClient.LoginWhiteLabelUser(ul.Email, ul.Password, true)
 	if err != nil {
 		// to do: add error constants to lootlocker package to check the actual error message
-		respond(http.StatusNotAcceptable, "invalid username or password", nil, w)
-		return
+		return statusnotacceptable("invalid username or password")
 	}
 
 	// start white label session using the token
 	gameSession, err := lootlockerClient.StartWhiteLabelSession(ul.Email, token, "1.0")
 	if err != nil {
-		respond(http.StatusInternalServerError, err.Error(), nil, w)
-		return
+		return statusinternalservererror(err.Error())
 	}
 
 	sessionInfo, err := lootlockerClient.GetInfoFromSession(gameSession.SessionToken)
 	if err != nil {
-		respond(http.StatusInternalServerError, err.Error(), nil, w)
-		return
+		return statusinternalservererror(err.Error())
 	}
 
 	c := &http.Cookie{
@@ -88,5 +84,5 @@ func (s *session) login(w http.ResponseWriter, r *http.Request) {
 		SameSite: http.SameSiteLaxMode,
 	}
 	http.SetCookie(w, c)
-	respond(http.StatusOK, "success", nil, w)
+	return statusok(nil)
 }
