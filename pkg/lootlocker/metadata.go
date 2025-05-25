@@ -11,18 +11,23 @@ type Metadata struct {
 	Key    string       `json:"key"`
 	Tags   []string     `json:"tags"`
 	Type   MetadataType `json:"type"`
-
 	// left as raw message so you can unmarshal it
-	Value json.RawMessage `json:"value"`
+	Value any `json:"value"`
+
+	Action MetadataAction `json:"action,omitempty"`
 }
 
 type MetadataType string
 type MetadataSource string
+type MetadataAction string
 
 const (
 	MetadataTypeJSON MetadataType = "json"
 
 	MetadataSourcePlayer MetadataSource = "player"
+
+	MetadataActionUpdate MetadataAction = "update"
+	MetadataActionCreate MetadataAction = "create"
 )
 
 // https://api.lootlocker.com/game/metadata/source/{source}/id/{source_id}
@@ -58,4 +63,15 @@ func (c *Client) ListMetadata(source MetadataSource, sourceID, token string) (ma
 		meta[val.Key] = val
 	}
 	return meta, nil
+}
+
+// https://api.lootlocker.com/game/metadata
+
+func (c *Client) UpdatePlayerMetadata(session string, metadata []Metadata) error {
+	raw, err := json.Marshal(map[string]any{"self": true, "entries": metadata})
+	if err != nil {
+		return err
+	}
+	_, err = c.Request(http.MethodPost, "game/metadata", application_json, raw, map[string]string{"x-session-token": session})
+	return err
 }

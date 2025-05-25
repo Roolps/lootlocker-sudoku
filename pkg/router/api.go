@@ -106,6 +106,29 @@ func (e *stateEndpoint) Get(s *session, w http.ResponseWriter) *apiresponse {
 }
 
 func (e *stateEndpoint) Post(s *session, w http.ResponseWriter, raw []byte) *apiresponse {
-	// to do: this is the to do for tomorrow morning! let's sort out the update metadata so we can keep state saved to player account
+	var gameState [][]cell
+	if err := json.Unmarshal(raw, &gameState); err != nil {
+		return statusinternalservererror(err.Error())
+	}
+	if err := lootlockerClient.UpdatePlayerMetadata(s.Token, []lootlocker.Metadata{{
+		Access: []string{
+			"game_api.read",
+			"game_api.write",
+		},
+		Key:    "current_state",
+		Tags:   []string{},
+		Value:  gameState,
+		Type:   lootlocker.MetadataTypeJSON,
+		Action: lootlocker.MetadataActionUpdate,
+	}}); err != nil {
+		logger.Error(err)
+		return statusinternalservererror(err.Error())
+	}
 	return statusok(nil)
+}
+
+type cell struct {
+	Value     *int   `json:"value,omitempty"`
+	Immutable bool   `json:"immutable,omitempty"`
+	Pencil    []bool `json:"pencil,omitempty"`
 }
