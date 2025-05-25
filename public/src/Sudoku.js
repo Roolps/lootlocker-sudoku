@@ -72,13 +72,72 @@ export default function Sudoku() {
     const allColsValid = columns.every(isValidGroup);
 
     // if these are both valid then the solution is complete + valid!
-    console.log(allRowsValid && allColsValid);
+    if (allRowsValid && allColsValid) {
+      // run a complete game request and reset the game state
+      finishGame()
+    }
   }
 
   function isValidGroup(group) {
     const sorted = [...group].sort((a, b) => a - b);
     const expected = [1, 2, 3, 4, 5, 6, 7, 8, 9];
     return JSON.stringify(sorted) === JSON.stringify(expected);
+  }
+
+  // call to finish the game
+  async function finishGame() {
+    try {
+      const response = await fetch(`/api/game`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+
+        throw new Error(`Finish game failed with status ${response.status} : ${error.message}`);
+      }
+
+      setGameState([]);
+    } catch (err) {
+      console.error(err.message);
+
+      const errorMsg = document.getElementById("finished-overlay-error");
+      errorMsg.innerHTML = err.message;
+      errorMsg.classList.add("active");
+
+      setTimeout(() => {
+        errorMsg.classList.remove("active");
+      }, 5000);
+    }
+  }
+
+  // clear the board and exit game
+  async function exitGame() {
+    try {
+      const response = await fetch(`/api/state`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+
+        throw new Error(`Exit game failed with status ${response.status} : ${error.message}`);
+      }
+
+      setGameState([]);
+    } catch (err) {
+      console.error(err.message);
+
+      const errorMsg = document.getElementById("paused-overlay-error");
+      errorMsg.innerHTML = err.message;
+      errorMsg.classList.add("active");
+
+      setTimeout(() => {
+        errorMsg.classList.remove("active");
+      }, 5000);
+    }
   }
 
   return (
@@ -90,12 +149,14 @@ export default function Sudoku() {
           (<>
             {gameState && gameState.length > 0 ? (
               <Board
-                fetchState={fetchState}
                 setGameState={setGameState}
                 setPencilMarks={setPencilMarks}
 
                 gameState={gameState}
                 pencilState={pencilState}
+
+                finishGame={finishGame}
+                exitGame={exitGame}
               />
 
             ) : gameState && gameState.length === 0 ? (

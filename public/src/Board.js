@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Timer } from "./Timer";
 import { ActionButtons } from "./ActionButtons";
 
-export function Board({ fetchState, setGameState, setPencilMarks, gameState, pencilState }) {
+export function Board({ setGameState, setPencilMarks, gameState, pencilState, exitGame, finishGame }) {
     const [isPaused, setIsPaused] = useState(false);
     const [selection, setSelection] = useState({ row: 0, col: 0 });
 
@@ -144,34 +144,6 @@ export function Board({ fetchState, setGameState, setPencilMarks, gameState, pen
         setGameState(newGameState);
     }
 
-    // clear the board and exit game
-    async function exitGame() {
-        try {
-            const response = await fetch(`/api/state`, {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-            });
-
-            if (!response.ok) {
-                const error = await response.json().catch(() => ({}));
-
-                throw new Error(`Start game failed with status ${response.status} : ${error.message}`);
-            }
-
-            // state was deleted - fetch a new one to reset
-            fetchState();
-        } catch (err) {
-            console.error(err.message);
-
-            const errorMsg = document.getElementById("paused-overlay-error");
-            errorMsg.innerHTML = err.message;
-            errorMsg.classList.add("active");
-
-            setTimeout(() => {
-                errorMsg.classList.remove("active");
-            }, 5000);
-        }
-    }
 
     function togglePause() {
         setIsPaused(prev => !prev)
@@ -213,13 +185,21 @@ export function Board({ fetchState, setGameState, setPencilMarks, gameState, pen
                     setPencilMarks={setPencilMarks}
                     pencilState={pencilState}
                 ></ActionButtons>
-                <div className={`paused-overlay flex column align-center justify-center ${isPaused ? "active" : ""}`}>
+                <div className={`popup flex column align-center justify-center ${isPaused ? "active" : ""}`}>
                     <h3>Game Paused</h3>
+                    <p>Returning to menu will reset your progress.</p>
                     <div className="flex">
                         <button className="btn-solid" onClick={togglePause}>Resume</button>
                         <button className="btn-solid accent" onClick={exitGame}>Exit to Menu</button>
                     </div>
                     <p id="paused-overlay-error" className="error">something went wrong</p>
+                </div>
+                <div className="popup flex column align-center justify-center active">
+                    <h3>Congratulations!</h3>
+                    <p>You have completed this level.</p>
+                    <p className="score">+100 GridBits</p>
+                    <button className="btn-solid accent" onClick={finishGame}>Exit to Menu</button>
+                    <p id="finished-overlay-error" className="error">something went wrong</p>
                 </div>
             </div>
         </>

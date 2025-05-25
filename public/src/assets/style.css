@@ -507,7 +507,7 @@ form label{
 
 
 
-.paused-overlay{
+.popup{
   position: absolute;
   padding-bottom: 10rem;
   box-sizing: border-box;
@@ -519,21 +519,37 @@ form label{
   opacity: 0;
   pointer-events: none;
 }
-.paused-overlay h3{
+.popup h3{
   font-size: 1.5rem;
 }
-.paused-overlay .btn-solid{
+.popup .btn-solid{
   width: 12rem;
   margin: 0 2px;
 }
-.paused-overlay.active{
+.popup.active{
   opacity: 1;
   pointer-events: all;
+}
+.popup .score{
+  position: relative;
+  margin-top: 0;
+  padding-left: 2rem;
+  color: rgba(0,0,0,.5);
+}
+.popup .score::before{
+  width: 1.5rem !important;
+  height: 1.5rem !important;
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 
 
-
+.popup .score::before,
 #player-tokens-icon,
 #pause-btn{
   width: 2rem;
@@ -545,15 +561,16 @@ form label{
   margin-left: .5rem;
   background-color: transparent;
   border: none;
-  opacity: .4;
+  opacity: .5;
   cursor: pointer;
   transition: opacity .2s;
 }
+.popup .score::before,
 #player-tokens-icon{
-  cursor: normal;
   background-image: url(media/icons/coins.svg);
   margin: 0 .5rem 0 0;
   background-size: 80%;
+  cursor: default;
 }
 #pause-btn:hover{
   opacity: 1;
