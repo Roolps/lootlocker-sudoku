@@ -132,13 +132,16 @@ export function Board({ fetchState, gameState, pencilState, selection, onCellCli
 
     return (
         <>
-            <div id="timer-row" className="flex row space-between">
-                <p id="player-tokens" className="flex align-center">0</p>
-                <div className="flex">
-                    <button onClick={togglePaused}></button>
-                    <Timer 
-                    isPaused={isPaused}
+            <div id="timer-row" className="flex row space-between align-center">
+                <div className="flex align-center">
+                    <div id="player-tokens-icon"></div>
+                    <p id="player-tokens" className="flex align-center">0</p>
+                </div>
+                <div className="flex align-center">
+                    <Timer
+                        isPaused={isPaused}
                     />
+                    <button id="pause-btn" onClick={togglePaused}></button>
                 </div>
             </div>
             <div className="flex column align-center" style={{ position: "relative" }}>

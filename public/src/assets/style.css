@@ -110,21 +110,7 @@ h2{
   font-weight: 400;
   color: var(--secondary-text);
 }
-/* #timer::after,
-#player-tokens::before{
-  content: "";
-  display: inline-block;
-  width: 1.5rem;
-  height: 1.5rem;
-  margin-right: .3rem;
-  background-image: url(media/icons/coins.svg);
-  opacity: .5;
-}
-#timer::after{
-  margin-right: 0;
-  margin-left: .3rem;
-  background-image: url(media/icons/pause.svg);
-} */
+
 
 
 .container{
@@ -543,4 +529,31 @@ form label{
 .paused-overlay.active{
   opacity: 1;
   pointer-events: all;
+}
+
+
+
+
+#player-tokens-icon,
+#pause-btn{
+  width: 2rem;
+  height: 2rem;
+  background-image: url(media/icons/pause.svg);
+  background-repeat: no-repeat;
+  background-size: 80%;
+  background-position: center;
+  margin-left: .5rem;
+  background-color: transparent;
+  border: none;
+  opacity: .4;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+#player-tokens-icon{
+  background-image: url(media/icons/coins.svg);
+  margin: 0 .5rem 0 0;
+  background-size: 80%;
+}
+#pause-btn:hover{
+  opacity: 1;
 }
