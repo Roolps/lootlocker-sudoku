@@ -19,7 +19,7 @@ export default function Sudoku() {
       if (loader) {
         loader.classList.add("hidden");
       }
-    }, 1000);
+    }, 500);
   }, []);
 
   async function fetchState() {
@@ -40,9 +40,9 @@ export default function Sudoku() {
       }
 
       const data = await response.json();
-      
-      // user is logged in because it succeeded so enforce that
-      // log in state is true
+
+      // user is logged in because it succeeded so
+      // enforce that log in state is true
       setAuthenticated(true);
       setGameState(data["data"]);
 
@@ -155,11 +155,10 @@ export default function Sudoku() {
         if (loader) loader.classList.add("hidden");
 
         const error = await response.json().catch(() => ({}));
-        throw new Error(`Login failed: ${error.message || response.statusText}`);
+        throw new Error(`Login failed with status ${response.status} : ${error.message}`);
       }
 
-      const data = await response.json();
-      console.log("Login successful:", data);
+      // login was successful - fetch state :)
       fetchState();
 
     } catch (err) {
@@ -167,7 +166,14 @@ export default function Sudoku() {
       if (loader) loader.classList.add("hidden");
       console.error(err.message);
 
-      // handle the error here
+
+      const errorMsg = document.getElementById("login-error")
+      errorMsg.innerHTML = err.message
+      errorMsg.classList.add("active")
+
+      setTimeout(() => {
+        errorMsg.classList.remove("active")
+      }, 5000);
     }
   }
 
@@ -206,6 +212,7 @@ export default function Sudoku() {
                 <input className="input-field" name="password" type="password" placeholder="-" />
               </label>
               <button className="btn-solid" type="submit">Submit</button>
+              <p id="login-error">something went wrong</p>
               <div id="form-loader"></div>
             </form>
           )}

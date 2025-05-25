@@ -42,7 +42,10 @@
   --accent: #FC9753;
   --accent-light: #ffbc8f;
   --cross-color: #ffe4d1;
+  
+  --error-red: #EA5D4D;
 }
+
 body{
   background-color: var(--body);
   color: var(--primary-text);
@@ -343,11 +346,25 @@ form label{
   background-color: var(--primary-background);
   background-image: url(media/loading.svg);
   background-repeat: no-repeat;
-  background-size: 20%;
+  background-size: 18%;
   background-position: 50% 30%;
   transition: opacity .2s;
 }
 #form-loader.hidden{
   opacity: 0;
   pointer-events: none;
+}
+
+#login-error{
+  color: var(--error-red);
+  font-size: .8rem;
+  font-weight: 300;
+  line-height: 1rem;
+  margin: -1rem 0 0;
+  opacity: 0;
+  transition: margin .2s, opacity .2s;
+}
+#login-error.active{
+  margin: .5rem 0 -.5rem;
+  opacity: 1;
 }
