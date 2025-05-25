@@ -377,6 +377,7 @@ form label{
   background-color: var(--secondary-background);
   border-radius: .3rem .3rem 0 0;
   margin-bottom: 1.5rem;
+  box-sizing: border-box;
   padding: .3rem;
   border-bottom: 2px var(--secondary-background-hover) solid;
 }
