@@ -382,7 +382,7 @@ form label{
 .radio-label{
   position: relative;
   padding: .9rem;
-  width: 48%;
+  width: 50%;
   margin: 0;
   text-align: center;
   font-size: .9rem;
@@ -395,13 +395,11 @@ form label{
   color: #532607
 }
 .radio-wrap .backer{
-  width: 48%;
+  width: calc(50% - .6rem);
   height: calc(100% - .6rem);
   background-color: var(--accent);
   position: absolute;
   border-radius: .3rem;
-  left: 50.5%;
-  margin-right: .3rem;
   transition: left .3s;
 }
 .radio-label input{

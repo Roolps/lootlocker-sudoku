@@ -3,14 +3,14 @@ import { useState } from 'react';
 export function Auth({ fetchState }) {
     const [authFormType, setAuthFormType] = useState("login");
 
-    async function login(formdata) {
+    async function auth(formdata) {
         const loader = document.getElementById("form-loader");
         if (loader) {
             loader.classList.remove("hidden");
         }
 
         try {
-            const response = await fetch("/api/login", {
+            const response = await fetch(`/api/${formdata.get("action")}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -48,10 +48,10 @@ export function Auth({ fetchState }) {
 
 
     return (
-        <form className="flex column align-center" action={login}>
+        <form className="flex column align-center" action={auth}>
             <div className="flex align-center space-between radio-wrap">
-                <div className="backer" style={{ left: authFormType === "signup" ? "0" : "50.5%" }}></div>
-                <label className={`radio-label ${authFormType === "signup" ? "active" : ""}`}>
+                <div className="backer" style={{ left: authFormType === "signup" ? ".3rem" : "50%" }}></div>
+                <label style={{marginRight: ".15rem"}} className={`radio-label ${authFormType === "signup" ? "active" : ""}`}>
                     Signup
                     <input
                         type="radio"
@@ -62,7 +62,7 @@ export function Auth({ fetchState }) {
                     />
                 </label>
 
-                <label className={`radio-label ${authFormType === "login" ? "active" : ""}`}>
+                <label style={{marginLeft: ".15rem"}} className={`radio-label ${authFormType === "login" ? "active" : ""}`}>
                     Login
                     <input
                         type="radio"
