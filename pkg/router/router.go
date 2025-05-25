@@ -50,6 +50,12 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 			}
 			return
 
+		case "/signup":
+			if err := s.signup(w, r).Write(w); err != nil {
+				logger.Error(err)
+			}
+			return
+
 		default:
 			if !s.LoggedIn {
 				if err := statusForbidden("forbidden").Write(w); err != nil {

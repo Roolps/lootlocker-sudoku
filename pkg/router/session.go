@@ -57,6 +57,26 @@ func (s *session) login(w http.ResponseWriter, r *http.Request) *apiresponse {
 		return statusinternalservererror(fmt.Sprintf("failed to unmarshal body: %v", err))
 	}
 
+	return ul.Authorise(s, w)
+}
+
+func (s *session) signup(w http.ResponseWriter, r *http.Request) *apiresponse {
+	raw, err := io.ReadAll(r.Body)
+	if err != nil {
+		return statusnotacceptable(fmt.Sprintf("failed to read request body: %v", err))
+	}
+	ul := &userlogin{}
+	if err := json.Unmarshal(raw, ul); err != nil {
+		return statusinternalservererror(fmt.Sprintf("failed to unmarshal body: %v", err))
+	}
+
+	if _, err = lootlockerClient.CreateWhiteLabelLogin(ul.Email, ul.Password); err != nil {
+		return statusnotacceptable(err.Error())
+	}
+	return ul.Authorise(s, w)
+}
+
+func (ul *userlogin) Authorise(s *session, w http.ResponseWriter) *apiresponse {
 	token, err := lootlockerClient.LoginWhiteLabelUser(ul.Email, ul.Password, true)
 	if err != nil {
 		// to do: add error constants to lootlocker package to check the actual error message
