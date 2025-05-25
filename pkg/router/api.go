@@ -82,6 +82,8 @@ type postEndpoint interface {
 
 func whichPostEndpoint(e string) postEndpoint {
 	switch e {
+	case "/logout":
+		return &logoutEndpoint{}
 	case "/state":
 		return &stateEndpoint{}
 	case "/game":

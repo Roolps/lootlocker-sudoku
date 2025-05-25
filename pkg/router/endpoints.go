@@ -10,6 +10,24 @@ import (
 	"github.com/roolps/lootlocker-sudoku/backend/pkg/lootlocker"
 )
 
+type logoutEndpoint struct{}
+
+func (e *logoutEndpoint) Post(s *session, w http.ResponseWriter, raw []byte) *apiresponse {
+	c := &http.Cookie{
+		Name:     "session",
+		Value:    "",
+		Path:     "/",
+		Domain:   origin,
+		Expires:  time.Unix(0, 0),
+		MaxAge:   -1,
+		Secure:   true,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	}
+	http.SetCookie(w, c)
+	return statusok(nil)
+}
+
 type stateEndpoint struct {
 }
 

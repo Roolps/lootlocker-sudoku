@@ -94,7 +94,7 @@ export function Board({ gameState, pencilState, selection, onCellClick, onNumber
     }
 
     return (
-        <div className="flex column align-center">
+        <div className="flex column align-center" style={{position: "relative"}}>
             <div className="cells flex column">{boardElements}</div>
             <div id="num-btns" className="flex row">
                 {[...Array(9)].map((_, i) => {
@@ -119,6 +119,11 @@ export function Board({ gameState, pencilState, selection, onCellClick, onNumber
                     }
                     return <button key={i} className={`action-btn ${key}`} onClick={() => onActionButtonClick(key)}></button>
                 })}
+            </div>
+            <div className="paused-overlay flex column align-center justify-center">
+                <p>Game Paused</p>
+                <button>Resume</button>
+                <button>Exit to Menu</button>
             </div>
         </div>
     );

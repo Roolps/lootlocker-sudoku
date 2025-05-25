@@ -33,7 +33,10 @@ export function Menu({ fetchState }) {
                 errorMsg.classList.remove("active");
             }, 5000);
         }
+    }
 
+    function logout(){
+        
     }
 
     return (
@@ -70,8 +73,8 @@ export function Menu({ fetchState }) {
             </div>
 
             <div className="player-profile flex space-between align-center">
-                <p>yara@clubnode.com</p>
-                <button id="logout-btn">Logout</button>
+                <p>users email would be here</p>
+                <button id="logout-btn" onClick={logout}>Logout</button>
             </div>
         </div>
     )
