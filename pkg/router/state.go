@@ -2,7 +2,9 @@ package router
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/roolps/lootlocker-sudoku/backend/pkg/lootlocker"
@@ -43,15 +45,32 @@ func (e *stateEndpoint) Get(s *session, w http.ResponseWriter) *apiresponse {
 		return statusok(gameState.Value)
 	}
 
-	// empty game :)
-	val := make([][]map[string]interface{}, 9)
-	for i := range val {
-		val[i] = make([]map[string]interface{}, 9)
-		for j := range val[i] {
-			val[i][j] = map[string]interface{}{}
-		}
+	gamestate := [][]cell{}
+	raw, err := os.ReadFile(fmt.Sprintf("%v/example_games/easy.json", wd))
+	if err != nil {
+		return statusinternalservererror(err.Error())
 	}
-	return statusok(val)
+	if err := json.Unmarshal(raw, &gamestate); err != nil {
+		return statusinternalservererror(err.Error())
+	}
+
+	// create current game state
+	if err := lootlockerClient.UpdatePlayerMetadata(s.Token, []lootlocker.Metadata{
+		{
+			Access: []string{
+				"game_api.read",
+				"game_api.write",
+			},
+			Key:    "current_state",
+			Tags:   []string{},
+			Value:  gamestate,
+			Type:   lootlocker.MetadataTypeJSON,
+			Action: lootlocker.MetadataActionCreate,
+		},
+	}); err != nil {
+		return statusinternalservererror(err.Error())
+	}
+	return statusok(gamestate)
 }
 
 func (e *stateEndpoint) Post(s *session, w http.ResponseWriter, raw []byte) *apiresponse {
@@ -59,6 +78,8 @@ func (e *stateEndpoint) Post(s *session, w http.ResponseWriter, raw []byte) *api
 	if err := json.Unmarshal(raw, &gameState); err != nil {
 		return statusinternalservererror(err.Error())
 	}
+
+	// update current game state
 	if err := lootlockerClient.UpdatePlayerMetadata(s.Token, []lootlocker.Metadata{{
 		Access: []string{
 			"game_api.read",
@@ -70,7 +91,6 @@ func (e *stateEndpoint) Post(s *session, w http.ResponseWriter, raw []byte) *api
 		Type:   lootlocker.MetadataTypeJSON,
 		Action: lootlocker.MetadataActionUpdate,
 	}}); err != nil {
-		logger.Error(err)
 		return statusinternalservererror(err.Error())
 	}
 	return statusok(nil)

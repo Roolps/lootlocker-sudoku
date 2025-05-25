@@ -83,6 +83,6 @@ export function Auth({ fetchState }) {
             </label>
             <button className="btn-solid" type="submit">Submit</button>
             <p id="login-error">something went wrong</p>
-            <div id="form-loader" className="hidden"></div>
+            <div id="form-loader"></div>
         </form>)
 }

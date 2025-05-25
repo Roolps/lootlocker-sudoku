@@ -51,6 +51,7 @@ func statusForbidden(msg string) *apiresponse {
 }
 
 func statusinternalservererror(msg string) *apiresponse {
+	logger.Error(msg)
 	return &apiresponse{Code: http.StatusInternalServerError, Message: msg}
 }
 
