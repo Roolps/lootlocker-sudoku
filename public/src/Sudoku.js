@@ -13,13 +13,6 @@ export default function Sudoku() {
 
   useEffect(() => {
     fetchState();
-
-    setTimeout(() => {
-      const loader = document.getElementById("form-loader");
-      if (loader) {
-        loader.classList.add("hidden");
-      }
-    }, 500);
   }, []);
 
   async function fetchState() {
@@ -33,6 +26,13 @@ export default function Sudoku() {
         // set user authentication status to not logged in
         if (response.status === 403) {
           setAuthenticated(false);
+          
+          setTimeout(() => {
+            const loader = document.getElementById("form-loader");
+            if (loader) {
+              loader.classList.add("hidden");
+            }
+          }, 500);
         }
 
         const error = await response.json().catch(() => ({}));
@@ -68,12 +68,12 @@ export default function Sudoku() {
 
       // set the pencil state
       if (!cell.pencil || !Array.isArray(cell.pencil)) {
-        cell.pencil = Array(9).fill(0);
+        cell.pencil = Array(9).fill(false);
       }
       if (cell.pencil[number]) {
-        cell.pencil[number] = 0
+        cell.pencil[number] = false
       } else {
-        cell.pencil[number] = 1
+        cell.pencil[number] = true
       }
     } else {
       if (cell.value === number + 1) {
