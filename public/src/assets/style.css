@@ -484,11 +484,8 @@ form label{
   width: 24rem;
 }
 .new-game-btn span{
-  padding: .8rem;
   width: 100%;
-  box-sizing: border-box;
   display: inline-block;
-  border-radius: .3rem;
   transition: background-color .2s;
 }
 .new-game-btn.active span{

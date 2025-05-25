@@ -14,7 +14,7 @@ export function Menu({ fetchState }) {
                 })
             });
 
-            if(!response.ok){
+            if (!response.ok) {
                 const error = await response.json().catch(() => ({}));
 
                 throw new Error(`Start game failed with status ${response.status} : ${error.message}`);
@@ -24,7 +24,7 @@ export function Menu({ fetchState }) {
             fetchState();
         } catch (err) {
             console.error(err.message);
-        
+
             const errorMsg = document.getElementById("start-game-error");
             errorMsg.innerHTML = err.message;
             errorMsg.classList.add("active");
@@ -35,8 +35,31 @@ export function Menu({ fetchState }) {
         }
     }
 
-    function logout(){
-        
+    async function logout() {
+        try {
+            const response = await fetch(`/api/logout`, {
+                method: "POST",
+            });
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+
+                throw new Error(`Start game failed with status ${response.status} : ${error.message}`);
+            }
+
+            // game was started - fetch the state!
+            fetchState();
+        } catch (err) {
+            console.error(err.message);
+
+            alert(err.message);
+        }
+    }
+
+    function getEmail() {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; email=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
     }
 
     return (
@@ -73,7 +96,7 @@ export function Menu({ fetchState }) {
             </div>
 
             <div className="player-profile flex space-between align-center">
-                <p>users email would be here</p>
+                <p>{getEmail()}</p>
                 <button id="logout-btn" onClick={logout}>Logout</button>
             </div>
         </div>
