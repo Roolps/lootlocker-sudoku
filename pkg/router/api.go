@@ -31,6 +31,15 @@ func (s *session) apiRequest(path string, w http.ResponseWriter, r *http.Request
 			}
 			return obj.Post(s, w, raw)
 		}
+	case http.MethodDelete:
+		obj := whichDeleteEndpoint(path)
+		if obj != nil{
+			raw, err := io.ReadAll(r.Body)
+			if err != nil && err != io.EOF{
+				return statusinternalservererror(err.Error())
+			}
+			return obj.Delete(s, w, raw)
+		}
 	}
 
 	return statusnotfound()
@@ -64,6 +73,7 @@ func statusok(data any) *apiresponse {
 	return &apiresponse{Code: http.StatusOK, Message: "success", Data: data}
 }
 
+// api endpoints
 type getEndpoint interface {
 	Get(*session, http.ResponseWriter) *apiresponse
 }
@@ -88,6 +98,18 @@ func whichPostEndpoint(e string) postEndpoint {
 		return &stateEndpoint{}
 	case "/game":
 		return &gameEndpoint{}
+	}
+	return nil
+}
+
+type deleteEndpoint interface {
+	Delete(*session, http.ResponseWriter, []byte) *apiresponse
+}
+
+func whichDeleteEndpoint(e string) deleteEndpoint {
+	switch e {
+	case "/state":
+		return &stateEndpoint{}
 	}
 	return nil
 }

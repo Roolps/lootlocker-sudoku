@@ -91,6 +91,16 @@ func (e *stateEndpoint) Post(s *session, w http.ResponseWriter, raw []byte) *api
 	return statusok(nil)
 }
 
+func (e *stateEndpoint) Delete(s *session, w http.ResponseWriter, raw []byte) *apiresponse {
+	if err := lootlockerClient.UpdatePlayerMetadata(s.Token, []lootlocker.Metadata{{
+		Key:    "current_state",
+		Action: lootlocker.MetadataActionDelete,
+	}}); err != nil {
+		return statusinternalservererror(err.Error())
+	}
+	return statusok(nil)
+}
+
 type gameEndpoint struct {
 	Difficulty string `json:"difficulty"`
 }

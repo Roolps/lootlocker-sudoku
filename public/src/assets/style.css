@@ -456,7 +456,7 @@ form label{
 #logout-btn{
   position: relative;
   background-color: transparent;
-  color: var(--accent-light);
+  color: var(--accent);
   border: none;
   font-weight: 500;
   padding: 0rem 1.3rem 0rem 0;
