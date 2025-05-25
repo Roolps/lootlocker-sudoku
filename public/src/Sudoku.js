@@ -1,6 +1,7 @@
 import { Board } from "./Board"
 import { Timer } from "./Timer"
 import { Auth } from "./Auth"
+import { Menu } from "./Menu"
 
 import { useState, useEffect } from 'react';
 
@@ -140,32 +141,9 @@ export default function Sudoku() {
       <div className="board flex column align-center">
         <h1>Lootlocker Sudoku</h1>
 
-        <div id="game-menu" className="flex column align-center">
-          <div className="flex column align-start">
-            <h3>Start New Game</h3>
-            <div className="new-game-btn-wrap flex column">
-              <div className="backer"></div>
-              <button className="new-game-btn active">Easy</button>
-              <button className="new-game-btn">Medium</button>
-              <button className="new-game-btn">Hard</button>
-            </div>
+        <Menu>
 
-            <div className="divider">
-              <p>OR</p>
-            </div>
-
-            <button id="custom-upload-btn" className="new-game-btn">
-              <div className="backer">Upload Custom</div>
-            </button>
-
-            <button className="btn-solid">Start Game</button>
-          </div>
-
-          <div className="player-profile flex space-between align-end">
-            <p><sup>Logged in as</sup><br></br>yara@clubnode.com</p>
-            <button id="logout-btn">Logout</button>
-          </div>
-        </div>
+        </Menu>
 
         {authenticated ?
           (<>

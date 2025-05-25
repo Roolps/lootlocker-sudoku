@@ -95,6 +95,10 @@ h1{
   font-weight: 600;
   font-size: 2.4rem;
 }
+h2{
+  font-size: 1.2rem;
+  color: var(--secondary-text);
+}
 #timer-row{
   width: 27.5rem;
   margin: 1rem 0 .5rem;
@@ -404,7 +408,6 @@ form label{
 .radio-label.active{
   color: #532607
 }
-.new-game-btn-wrap .backer,
 .radio-wrap .backer{
   width: calc(50% - .6rem);
   height: calc(100% - .6rem);
@@ -430,17 +433,17 @@ form label{
   width: 24rem;
   margin-top: 1.5rem;
 }
-#game-menu .player-profile p{
-  font-size: 1.2rem;
-  line-height: 1.2rem;
-  margin-bottom: 0;
-}
-#game-menu .player-profile p sup{
-  font-weight: 300;
-  font-size: .9rem;
-}
 #game-menu .player-profile{
-  margin-top: 3rem;
+  margin-top: 5rem;
+  box-sizing: border-box;
+  border-radius: .5rem;
+  /* padding: 1rem 1.5rem;
+  background-color: var(--secondary-background); */
+}
+#game-menu .player-profile p{
+  font-size: .9rem;
+  margin: 0;
+  font-weight: 400;
 }
 #logout-btn{
   position: relative;
@@ -448,7 +451,7 @@ form label{
   color: var(--accent-light);
   border: none;
   font-weight: 500;
-  padding: .3rem 1.3rem .3rem 0;
+  padding: 0rem 1.3rem 0rem 0;
 }
 #logout-btn::after{
   content: "";
@@ -467,27 +470,31 @@ form label{
 
 
 .new-game-btn-wrap{
-  position: relative;
-  border-radius: .5rem;
-  background-color: var(--secondary-background);
-  padding: .3rem;
-}
-.new-game-btn-wrap .backer{
-  width: calc(100% - .6rem);
-  left: 50%;
-  transform: translateX(-50%);
-  height: 33%;
-  top: .3rem;
+  margin-top: 1.5rem;
 }
 .new-game-btn{
   position: relative;
   width: 24rem;
   background-color: transparent;
   border: none;
-  padding: .8rem;
+  padding: .3rem;
   font-size: .8rem;
+  background-color: var(--secondary-background);
   color: rgba(0,0,0,.5);
   cursor: pointer;
+  border-radius: .5rem;
+  margin: 2px 0;
+}
+.new-game-btn span{
+  padding: .8rem;
+  width: 100%;
+  box-sizing: border-box;
+  display: inline-block;
+  border-radius: .3rem;
+  transition: background-color .2s;
+}
+.new-game-btn.active span{
+  background-color: var(--accent);
 }
 .divider{
   position: relative;
