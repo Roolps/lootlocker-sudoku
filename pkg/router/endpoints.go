@@ -97,3 +97,12 @@ func (e *stateEndpoint) Post(s *session, w http.ResponseWriter, raw []byte) *api
 	}
 	return statusok(nil)
 }
+
+type gameEndpoint struct {
+	Difficulty string `json:"difficulty"`
+}
+
+func (e *gameEndpoint) Post(s *session, w http.ResponseWriter, raw []byte) *apiresponse {
+
+	return statusok(nil)
+}

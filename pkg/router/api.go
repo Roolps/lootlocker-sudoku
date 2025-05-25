@@ -15,21 +15,22 @@ type apiresponse struct {
 
 func (s *session) apiRequest(path string, w http.ResponseWriter, r *http.Request) *apiresponse {
 	logger.Debugf("%s [%d] %s %s", r.Header.Get("X-Real-IP"), http.StatusOK, r.Method, r.URL.Path)
-	switch path {
-	// get the game state
-	case "/state":
-		e := &stateEndpoint{}
-		switch r.Method {
-		case http.MethodGet:
-			return e.Get(s, w)
-		case http.MethodPost:
+
+	switch r.Method {
+	case http.MethodGet:
+		obj := whichGetEndpoint(path)
+		if obj != nil {
+			return obj.Get(s, w)
+		}
+	case http.MethodPost:
+		obj := whichPostEndpoint(path)
+		if obj != nil {
 			raw, err := io.ReadAll(r.Body)
-			if err != nil {
+			if err != nil && err != io.EOF {
 				return statusinternalservererror(err.Error())
 			}
-			return e.Post(s, w, raw)
+			return obj.Post(s, w, raw)
 		}
-
 	}
 
 	return statusnotfound()
@@ -61,4 +62,30 @@ func statusnotacceptable(msg string) *apiresponse {
 
 func statusok(data any) *apiresponse {
 	return &apiresponse{Code: http.StatusOK, Message: "success", Data: data}
+}
+
+type getEndpoint interface {
+	Get(*session, http.ResponseWriter) *apiresponse
+}
+
+func whichGetEndpoint(e string) getEndpoint {
+	switch e {
+	case "/state":
+		return &stateEndpoint{}
+	}
+	return nil
+}
+
+type postEndpoint interface {
+	Post(*session, http.ResponseWriter, []byte) *apiresponse
+}
+
+func whichPostEndpoint(e string) postEndpoint {
+	switch e {
+	case "/state":
+		return &stateEndpoint{}
+	case "/game":
+		return &gameEndpoint{}
+	}
+	return nil
 }
