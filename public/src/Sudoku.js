@@ -15,27 +15,39 @@ export default function Sudoku() {
     fetchState();
 
     setTimeout(() => {
-      document.getElementById("form-loader").classList.add("hidden")
+      const loader = document.getElementById("form-loader");
+      if (loader) {
+        loader.classList.add("hidden");
+      }
     }, 1000);
   }, []);
 
   async function fetchState() {
     try {
-      const response = await fetch("/api/state");
+      const response = await fetch("/api/state", {
+        method: "GET",
+        headers: { "Accept": "application/json" },
+      });
 
       if (!response.ok) {
+        // set user authentication status to not logged in
         if (response.status === 403) {
           setAuthenticated(false);
         }
-        throw new Error(`Response status: ${response.status}`);
+
+        const error = await response.json().catch(() => ({}));
+        throw new Error(`Get State failed with status ${response.status} : ${error.message}`);
       }
 
       const data = await response.json();
+      
+      // user is logged in because it succeeded so enforce that
+      // log in state is true
       setAuthenticated(true);
       setGameState(data["data"]);
 
-    } catch (error) {
-      console.error(error.message);
+    } catch (err) {
+      console.error(err.message);
     }
   }
 
@@ -71,6 +83,7 @@ export default function Sudoku() {
       }
     }
 
+    // post new state to backend
     fetch("/api/state", {
       method: "POST",
       headers: {
@@ -122,14 +135,40 @@ export default function Sudoku() {
   }
 
   async function login(formdata) {
-    const response = await fetch("/api/login", {
-      method: "POST",
-      body: JSON.stringify({email: formdata.get("email"), password: formdata.get("password")})
-    });
+    const loader = document.getElementById("form-loader");
+    if (loader) {
+      loader.classList.remove("hidden");
+    }
 
-    const data = await response.json()
-    console.log(data)
-    fetchState();
+    try {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formdata.get("email"),
+          password: formdata.get("password")
+        })
+      });
+
+      if (!response.ok) {
+        // hide the loader
+        if (loader) loader.classList.add("hidden");
+
+        const error = await response.json().catch(() => ({}));
+        throw new Error(`Login failed: ${error.message || response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Login successful:", data);
+      fetchState();
+
+    } catch (err) {
+      // hide the loader
+      if (loader) loader.classList.add("hidden");
+      console.error(err.message);
+
+      // handle the error here
+    }
   }
 
   return (
@@ -171,7 +210,7 @@ export default function Sudoku() {
             </form>
           )}
 
-          <a id="powered-by-lootlocker" href="https://lootlocker.com/" target="_blank">Made using <span>Lootlocker</span></a>
+        <a id="powered-by-lootlocker" href="https://lootlocker.com/" target="_blank">Made using <span>Lootlocker</span></a>
       </div>
     </div>
   );
