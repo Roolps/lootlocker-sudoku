@@ -1,8 +1,24 @@
 import { useState } from "react";
 import { Timer } from "./Timer";
+import { ActionButtons } from "./ActionButtons";
 
-export function Board({ fetchState, gameState, pencilState, selection, onCellClick, onNumberButtonClick, onActionButtonClick }) {
+export function Board({ fetchState, setGameState, setPencilMarks, gameState, pencilState }) {
     const [isPaused, setIsPaused] = useState(false);
+    const [selection, setSelection] = useState({ row: 0, col: 0 });
+
+    // check if the current cell is immutable
+    var immutable = false
+    if (
+        Array.isArray(gameState) &&
+        Number.isInteger(selection.row) &&
+        Number.isInteger(selection.col) &&
+        selection.row >= 0 &&
+        selection.col >= 0 &&
+        selection.row < gameState.length &&
+        selection.col < (gameState[selection.row]?.length || 0)
+    ) {
+        immutable = !!gameState[selection.row][selection.col]?.immutable;
+    }
 
     let highlightValue = "row" in selection && "col" in selection && "value" in gameState[selection.row][selection.col] ? gameState[selection.row][selection.col].value : 0;
 
@@ -13,7 +29,7 @@ export function Board({ fetchState, gameState, pencilState, selection, onCellCli
         numberTotals[i] = 0;
     }
 
-    // loop through each row of the game's state
+    // generate the board from the game state
     gameState.forEach((row, i) => {
         var rowElements = []
         row.forEach((cell, j) => {
@@ -78,26 +94,57 @@ export function Board({ fetchState, gameState, pencilState, selection, onCellCli
                 numberTotals[value] = (Number(numberTotals[value]) || 0) + 1;
             }
 
-            rowElements.push(<button className={classes} key={cellName} onClick={() => onCellClick(i, j)}>{value}</button>);
+            rowElements.push(<button className={classes} key={cellName} onClick={() => setSelection({ row: i, col: j })}>{value}</button>);
         });
         const rowName = `Row-${i}`
         boardElements.push(<div className="flex row" key={rowName}>{rowElements}</div>)
     });
 
-    var immutable = false
-    if (
-        Array.isArray(gameState) &&
-        Number.isInteger(selection.row) &&
-        Number.isInteger(selection.col) &&
-        selection.row >= 0 &&
-        selection.col >= 0 &&
-        selection.row < gameState.length &&
-        selection.col < (gameState[selection.row]?.length || 0)
-    ) {
-        // set immutable to whether the current selection is mutable or not
-        immutable = !!gameState[selection.row][selection.col]?.immutable;
+    // handle numberbutton click
+    function handleNumberButton(number) {
+        let newGameState = gameState.map(row => row.slice());
+        let cell = gameState[selection.row][selection.col];
+
+        if ("value" in cell && cell.immutable) {
+            return;
+        }
+
+        if (pencilState) {
+            delete cell.value
+
+            // set the pencil state
+            if (!cell.pencil || !Array.isArray(cell.pencil)) {
+                cell.pencil = Array(9).fill(false);
+            }
+            if (cell.pencil[number]) {
+                cell.pencil[number] = false
+            } else {
+                cell.pencil[number] = true
+            }
+        } else {
+            if (cell.value === number + 1) {
+                newGameState[selection.row][selection.col] = {};
+            } else {
+                newGameState[selection.row][selection.col] = { value: number + 1, immutable: false };
+            }
+        }
+
+        // post new state to backend
+        fetch("/api/state", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(newGameState),
+        }).catch((error) => {
+            // to do: make an error popup
+            console.log(error)
+        });
+
+        setGameState(newGameState);
     }
 
+    // clear the board and exit game
     async function exitGame() {
         try {
             const response = await fetch(`/api/state`, {
@@ -126,8 +173,8 @@ export function Board({ fetchState, gameState, pencilState, selection, onCellCli
         }
     }
 
-    function togglePaused() {
-        setIsPaused(prev => !prev);
+    function togglePause() {
+        setIsPaused(prev => !prev)
     }
 
     return (
@@ -141,7 +188,7 @@ export function Board({ fetchState, gameState, pencilState, selection, onCellCli
                     <Timer
                         isPaused={isPaused}
                     />
-                    <button id="pause-btn" onClick={togglePaused}></button>
+                    <button id="pause-btn" onClick={togglePause}></button>
                 </div>
             </div>
             <div className="flex column align-center" style={{ position: "relative" }}>
@@ -156,24 +203,20 @@ export function Board({ fetchState, gameState, pencilState, selection, onCellCli
                             <button
                                 key={i}
                                 className={`num-btn ${isActive ? "active" : ""} ${isLocked ? "locked" : ""} ${isDimmed ? "dimmed" : ""}`}
-                                onClick={() => onNumberButtonClick(i)}>
+                                onClick={() => handleNumberButton(i)}>
                                 {i + 1}
                             </button>
                         )
                     })}
                 </div>
-                <div id="action-btns" className="flex row">
-                    {["edit", "erase", "hint", "pencil", "undo"].map((key, i) => {
-                        if (key == "pencil" && pencilState) {
-                            return <button key={i} className={`action-btn ${key} active`} onClick={() => onActionButtonClick(key)}></button>
-                        }
-                        return <button key={i} className={`action-btn ${key}`} onClick={() => onActionButtonClick(key)}></button>
-                    })}
-                </div>
+                <ActionButtons
+                    setPencilMarks={setPencilMarks}
+                    pencilState={pencilState}
+                ></ActionButtons>
                 <div className={`paused-overlay flex column align-center justify-center ${isPaused ? "active" : ""}`}>
                     <h3>Game Paused</h3>
                     <div className="flex">
-                        <button className="btn-solid" onClick={togglePaused}>Resume</button>
+                        <button className="btn-solid" onClick={togglePause}>Resume</button>
                         <button className="btn-solid accent" onClick={exitGame}>Exit to Menu</button>
                     </div>
                     <p id="paused-overlay-error" className="error">something went wrong</p>

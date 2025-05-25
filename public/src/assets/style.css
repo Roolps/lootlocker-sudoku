@@ -550,6 +550,7 @@ form label{
   transition: opacity .2s;
 }
 #player-tokens-icon{
+  cursor: normal;
   background-image: url(media/icons/coins.svg);
   margin: 0 .5rem 0 0;
   background-size: 80%;
