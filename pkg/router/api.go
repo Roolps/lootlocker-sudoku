@@ -18,7 +18,6 @@ type apiresponse struct {
 
 func (s *session) apiRequest(path string, w http.ResponseWriter, r *http.Request) *apiresponse {
 	logger.Debugf("%s [%d] %s %s", r.Header.Get("X-Real-IP"), http.StatusOK, r.Method, r.URL.Path)
-	logger.Debug(path)
 	switch path {
 	// get the game state
 	case "/state":

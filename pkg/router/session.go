@@ -56,6 +56,7 @@ func (s *session) login(w http.ResponseWriter, r *http.Request) *apiresponse {
 	if err := json.Unmarshal(raw, ul); err != nil {
 		return statusinternalservererror(fmt.Sprintf("failed to unmarshal body: %v", err))
 	}
+
 	token, err := lootlockerClient.LoginWhiteLabelUser(ul.Email, ul.Password, true)
 	if err != nil {
 		// to do: add error constants to lootlocker package to check the actual error message
@@ -78,7 +79,7 @@ func (s *session) login(w http.ResponseWriter, r *http.Request) *apiresponse {
 		Value:    fmt.Sprintf("%v:%v:%v", sessionInfo.ID, ul.Email, gameSession.SessionToken),
 		Path:     "/",
 		Domain:   origin,
-		Expires:  time.Now().AddDate(20, 0, 0),
+		Expires:  time.Now().Add(24 * time.Hour),
 		Secure:   true,
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,

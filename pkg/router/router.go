@@ -64,5 +64,10 @@ func Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	switch r.URL.Path {
+	case "/manifest.json", "/logo192.png", "/logo512.png", "/favicon.ico":
+		http.ServeFile(w, r, fmt.Sprintf("%v/public/build%v", wd, r.URL.Path))
+		return
+	}
 	http.ServeFile(w, r, fmt.Sprintf("%v/public/build/index.html", wd))
 }

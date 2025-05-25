@@ -349,4 +349,5 @@ form label{
 }
 #form-loader.hidden{
   opacity: 0;
+  pointer-events: none;
 }
