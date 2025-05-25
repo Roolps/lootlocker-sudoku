@@ -74,7 +74,7 @@ export default function Sudoku() {
     // if these are both valid then the solution is complete + valid!
     if (allRowsValid && allColsValid) {
       // run a complete game request and reset the game state
-      finishGame()
+      document.getElementById("game-finished-popup").classList.add("active")
     }
   }
 

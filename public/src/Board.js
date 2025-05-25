@@ -194,7 +194,7 @@ export function Board({ setGameState, setPencilMarks, gameState, pencilState, ex
                     </div>
                     <p id="paused-overlay-error" className="error">something went wrong</p>
                 </div>
-                <div className="popup flex column align-center justify-center active">
+                <div id="game-finished-popup" className="popup flex column align-center justify-center">
                     <h3>Congratulations!</h3>
                     <p>You have completed this level.</p>
                     <p className="score">+100 GridBits</p>

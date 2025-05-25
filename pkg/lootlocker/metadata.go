@@ -12,7 +12,7 @@ type Metadata struct {
 	Tags   []string     `json:"tags"`
 	Type   MetadataType `json:"type"`
 	// left as raw message so you can unmarshal it
-	Value any `json:"value"`
+	Value interface{} `json:"value"`
 
 	Action MetadataAction `json:"action,omitempty"`
 }
