@@ -10,11 +10,15 @@ export default function Sudoku() {
 
   const [authenticated, setAuthenticated] = useState(false);
 
-  const [selection, setSelection] = useState({ row: 0, col: 0 });
-
   useEffect(() => {
     fetchState();
   }, []);
+
+  useEffect(() => {
+    if (Array.isArray(gameState)) {
+      verifyResult();
+    }
+  }, [gameState]);
 
   async function fetchState() {
     try {
@@ -46,93 +50,35 @@ export default function Sudoku() {
       // enforce that log in state is true
       setAuthenticated(true);
       setGameState(data["data"]);
-
     } catch (err) {
       console.error(err.message);
     }
   }
 
-  function handleClick(i, j) {
-    setSelection({ row: i, col: j });
+  // check to see if the puzzle is complete
+  function verifyResult() {
+    var rows = Array.from({ length: 9 }, () => []);
+    var columns = Array.from({ length: 9 }, () => []);
+
+    gameState.forEach((row, i) => {
+      row.forEach((cell, j) => {
+        const val = cell.value ?? 0;
+        rows[i].push(val);
+        columns[j].push(val);
+      })
+    })
+
+    const allRowsValid = rows.every(isValidGroup);
+    const allColsValid = columns.every(isValidGroup);
+
+    // if these are both valid then the solution is complete + valid!
+    console.log(allRowsValid && allColsValid);
   }
 
-  function handleNumberClick(number) {
-    let newGameState = gameState.map(row => row.slice());
-    let cell = gameState[selection.row][selection.col];
-
-    if ("value" in cell && cell.immutable) {
-      return;
-    }
-
-    if (pencilState) {
-      delete cell.value
-
-      // set the pencil state
-      if (!cell.pencil || !Array.isArray(cell.pencil)) {
-        cell.pencil = Array(9).fill(false);
-      }
-      if (cell.pencil[number]) {
-        cell.pencil[number] = false
-      } else {
-        cell.pencil[number] = true
-      }
-    } else {
-      if (cell.value === number + 1) {
-        newGameState[selection.row][selection.col] = {};
-      } else {
-        newGameState[selection.row][selection.col] = { value: number + 1, immutable: false };
-      }
-    }
-
-    // post new state to backend
-    fetch("/api/state", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newGameState),
-    }).catch((error) => {
-      // to do: make an error popup
-      console.log(error)
-    });
-
-    setGameState(newGameState);
-  }
-
-  function handleActionButton(action) {
-    switch (action) {
-      case "edit":
-        return handleEditAction()
-      case "erase":
-        return handleEraseAction()
-      case "hint":
-        return handleHintAction()
-      case "pencil":
-        return handlePencilAction()
-      case "undo":
-        return handleUndoAction()
-    }
-  }
-
-  function handleEditAction() {
-
-  }
-
-  function handleEraseAction() {
-
-  }
-
-  function handleHintAction() {
-
-  }
-
-  function handlePencilAction() {
-    // toggle the value of the pencil mark state
-    setPencilMarks(prev => !prev);
-  }
-
-  function handleUndoAction() {
-
+  function isValidGroup(group) {
+    const sorted = [...group].sort((a, b) => a - b);
+    const expected = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    return JSON.stringify(sorted) === JSON.stringify(expected);
   }
 
   return (
@@ -145,12 +91,11 @@ export default function Sudoku() {
             {gameState && gameState.length > 0 ? (
               <Board
                 fetchState={fetchState}
+                setGameState={setGameState}
+                setPencilMarks={setPencilMarks}
+
                 gameState={gameState}
                 pencilState={pencilState}
-                selection={selection}
-                onCellClick={handleClick}
-                onNumberButtonClick={handleNumberClick}
-                onActionButtonClick={handleActionButton}
               />
 
             ) : gameState && gameState.length === 0 ? (
