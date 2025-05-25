@@ -331,11 +331,12 @@ form label{
 .btn-solid{
   cursor: pointer;
   width: 100%;
-  padding: .9rem;
+  padding: 1rem;
   background-color: var(--accent-green);
   color: var(--accent-green-dark);
   border: none;
   font-family: inherit;
+  font-size: .9rem;
   border-radius: 3rem;
   margin-top: 1rem;
   border: 2px var(--accent-green) solid;
@@ -529,6 +530,8 @@ form label{
   width: 100%;
   height: 100%;
   background-color: rgba(255, 255, 255, .9);
+  opacity: 0;
+  pointer-events: none;
 }
 .paused-overlay h3{
   font-size: 1.5rem;
@@ -536,4 +539,8 @@ form label{
 .paused-overlay .btn-solid{
   width: 12rem;
   margin: 0 2px;
+}
+.paused-overlay.active{
+  opacity: 1;
+  pointer-events: all;
 }

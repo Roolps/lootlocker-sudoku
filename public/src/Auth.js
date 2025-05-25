@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export function Auth({ fetchState }) {
     const [authFormType, setAuthFormType] = useState("login");

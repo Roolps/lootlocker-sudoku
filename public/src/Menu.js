@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export function Menu({ fetchState }) {
     const [selectedDifficulty, setSelectedDifficulty] = useState("easy");

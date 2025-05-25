@@ -1,5 +1,4 @@
 import { Board } from "./Board"
-import { Timer } from "./Timer"
 import { Auth } from "./Auth"
 import { Menu } from "./Menu"
 
@@ -144,21 +143,15 @@ export default function Sudoku() {
         {authenticated ?
           (<>
             {gameState && gameState.length > 0 ? (
-              <>
-                <div id="timer-row" className="flex row space-between">
-                  <p id="player-tokens" className="flex align-center">0</p>
-                  <Timer />
-                </div>
-                <Board
-                  fetchState={fetchState}
-                  gameState={gameState}
-                  pencilState={pencilState}
-                  selection={selection}
-                  onCellClick={handleClick}
-                  onNumberButtonClick={handleNumberClick}
-                  onActionButtonClick={handleActionButton}
-                />
-              </>
+              <Board
+                fetchState={fetchState}
+                gameState={gameState}
+                pencilState={pencilState}
+                selection={selection}
+                onCellClick={handleClick}
+                onNumberButtonClick={handleNumberClick}
+                onActionButtonClick={handleActionButton}
+              />
 
             ) : gameState && gameState.length === 0 ? (
               <Menu
