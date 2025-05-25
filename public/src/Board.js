@@ -1,4 +1,4 @@
-export function Board({ gameState, pencilState, selection, onCellClick, onNumberButtonClick, onActionButtonClick }) {
+export function Board({ fetchState, gameState, pencilState, selection, onCellClick, onNumberButtonClick, onActionButtonClick }) {
     let highlightValue = "row" in selection && "col" in selection && "value" in gameState[selection.row][selection.col] ? gameState[selection.row][selection.col].value : 0;
 
     let boardElements = [];
@@ -93,8 +93,36 @@ export function Board({ gameState, pencilState, selection, onCellClick, onNumber
         immutable = !!gameState[selection.row][selection.col]?.immutable;
     }
 
+    async function exitGame() {
+        try {
+            const response = await fetch(`/api/state`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+            });
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+
+                throw new Error(`Start game failed with status ${response.status} : ${error.message}`);
+            }
+
+            // state was deleted - fetch a new one to reset
+            fetchState();
+        } catch (err) {
+            console.error(err.message);
+
+            const errorMsg = document.getElementById("paused-overlay-error");
+            errorMsg.innerHTML = err.message;
+            errorMsg.classList.add("active");
+
+            setTimeout(() => {
+                errorMsg.classList.remove("active");
+            }, 5000);
+        }
+    }
+
     return (
-        <div className="flex column align-center" style={{position: "relative"}}>
+        <div className="flex column align-center" style={{ position: "relative" }}>
             <div className="cells flex column">{boardElements}</div>
             <div id="num-btns" className="flex row">
                 {[...Array(9)].map((_, i) => {
@@ -121,9 +149,12 @@ export function Board({ gameState, pencilState, selection, onCellClick, onNumber
                 })}
             </div>
             <div className="paused-overlay flex column align-center justify-center">
-                <p>Game Paused</p>
-                <button>Resume</button>
-                <button>Exit to Menu</button>
+                <h3>Game Paused</h3>
+                <div className="flex">
+                    <button className="btn-solid">Resume</button>
+                    <button className="btn-solid accent" onClick={exitGame}>Exit to Menu</button>
+                </div>
+                <p id="paused-overlay-error" className="error">something went wrong</p>
             </div>
         </div>
     );

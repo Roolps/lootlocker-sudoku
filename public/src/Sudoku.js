@@ -150,6 +150,7 @@ export default function Sudoku() {
                   <Timer />
                 </div>
                 <Board
+                  fetchState={fetchState}
                   gameState={gameState}
                   pencilState={pencilState}
                   selection={selection}
