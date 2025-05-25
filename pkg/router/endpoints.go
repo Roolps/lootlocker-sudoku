@@ -2,7 +2,9 @@ package router
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/roolps/lootlocker-sudoku/backend/pkg/lootlocker"
@@ -46,33 +48,6 @@ func (e *stateEndpoint) Get(s *session, w http.ResponseWriter) *apiresponse {
 	// return empty game state as there is none active
 	// this will force user to use the menu
 	return statusok([][]cell{})
-
-	/* gamestate := [][]cell{}
-	raw, err := os.ReadFile(fmt.Sprintf("%v/example_games/easy.json", wd))
-	if err != nil {
-		return statusinternalservererror(err.Error())
-	}
-	if err := json.Unmarshal(raw, &gamestate); err != nil {
-		return statusinternalservererror(err.Error())
-	}
-
-	// create current game state
-	if err := lootlockerClient.UpdatePlayerMetadata(s.Token, []lootlocker.Metadata{
-		{
-			Access: []string{
-				"game_api.read",
-				"game_api.write",
-			},
-			Key:    "current_state",
-			Tags:   []string{},
-			Value:  gamestate,
-			Type:   lootlocker.MetadataTypeJSON,
-			Action: lootlocker.MetadataActionCreate,
-		},
-	}); err != nil {
-		return statusinternalservererror(err.Error())
-	}
-	return statusok(gamestate) */
 }
 
 func (e *stateEndpoint) Post(s *session, w http.ResponseWriter, raw []byte) *apiresponse {
@@ -103,6 +78,39 @@ type gameEndpoint struct {
 }
 
 func (e *gameEndpoint) Post(s *session, w http.ResponseWriter, raw []byte) *apiresponse {
+	if err := json.Unmarshal(raw, e); err != nil {
+		return statusnotacceptable(err.Error())
+	}
+	switch e.Difficulty {
+	case "easy":
+	default:
+		return statusnotacceptable(fmt.Sprintf("invalid game difficulty %v", e.Difficulty))
+	}
 
-	return statusok(nil)
+	gamestate := [][]cell{}
+	raw, err := os.ReadFile(fmt.Sprintf("%v/example_games/%v.json", wd, e.Difficulty))
+	if err != nil {
+		return statusinternalservererror(err.Error())
+	}
+	if err := json.Unmarshal(raw, &gamestate); err != nil {
+		return statusinternalservererror(err.Error())
+	}
+
+	// create current game state
+	if err := lootlockerClient.UpdatePlayerMetadata(s.Token, []lootlocker.Metadata{
+		{
+			Access: []string{
+				"game_api.read",
+				"game_api.write",
+			},
+			Key:    "current_state",
+			Tags:   []string{},
+			Value:  gamestate,
+			Type:   lootlocker.MetadataTypeJSON,
+			Action: lootlocker.MetadataActionCreate,
+		},
+	}); err != nil {
+		return statusinternalservererror(err.Error())
+	}
+	return statusok(gamestate)
 }

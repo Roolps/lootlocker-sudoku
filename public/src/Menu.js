@@ -21,16 +21,16 @@ export function Menu({ fetchState }) {
             }
 
             // game was started - fetch the state!
-            fetchState()
+            fetchState();
         } catch (err) {
             console.error(err.message);
         
-            const errorMsg = document.getElementById("start-game-error")
-            errorMsg.innerHTML = err.message
-            errorMsg.classList.add("active")
+            const errorMsg = document.getElementById("start-game-error");
+            errorMsg.innerHTML = err.message;
+            errorMsg.classList.add("active");
 
             setTimeout(() => {
-                errorMsg.classList.remove("active")
+                errorMsg.classList.remove("active");
             }, 5000);
         }
 

@@ -160,8 +160,10 @@ export default function Sudoku() {
               </>
 
             ) : gameState && gameState.length === 0 ? (
-              <Menu />
-              
+              <Menu
+                fetchState={fetchState}
+              />
+
             ) : (
               <div className="error-message">An error occurred loading the game board.</div>
             )}
