@@ -1,4 +1,9 @@
-export function Board({ gameState, pencilState, selection, onCellClick, onNumberButtonClick, onActionButtonClick }) {
+import { useState } from "react";
+import { Timer } from "./Timer";
+
+export function Board({ fetchState, gameState, pencilState, selection, onCellClick, onNumberButtonClick, onActionButtonClick }) {
+    const [isPaused, setIsPaused] = useState(false);
+
     let highlightValue = "row" in selection && "col" in selection && "value" in gameState[selection.row][selection.col] ? gameState[selection.row][selection.col].value : 0;
 
     let boardElements = [];
@@ -93,33 +98,87 @@ export function Board({ gameState, pencilState, selection, onCellClick, onNumber
         immutable = !!gameState[selection.row][selection.col]?.immutable;
     }
 
-    return (
-        <div className="flex column align-center">
-            <div className="cells flex column">{boardElements}</div>
-            <div id="num-btns" className="flex row">
-                {[...Array(9)].map((_, i) => {
-                    const isActive = (i + 1) === highlightValue;
-                    const isLocked = isActive && immutable;
-                    const isDimmed = !isActive && (immutable || numberTotals[i + 1] === 9);
+    async function exitGame() {
+        try {
+            const response = await fetch(`/api/state`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+            });
 
-                    return (
-                        <button
-                            key={i}
-                            className={`num-btn ${isActive ? 'active' : ''} ${isLocked ? 'locked' : ''} ${isDimmed ? 'dimmed' : ''}`}
-                            onClick={() => onNumberButtonClick(i)}>
-                            {i + 1}
-                        </button>
-                    )
-                })}
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+
+                throw new Error(`Start game failed with status ${response.status} : ${error.message}`);
+            }
+
+            // state was deleted - fetch a new one to reset
+            fetchState();
+        } catch (err) {
+            console.error(err.message);
+
+            const errorMsg = document.getElementById("paused-overlay-error");
+            errorMsg.innerHTML = err.message;
+            errorMsg.classList.add("active");
+
+            setTimeout(() => {
+                errorMsg.classList.remove("active");
+            }, 5000);
+        }
+    }
+
+    function togglePaused() {
+        setIsPaused(prev => !prev);
+    }
+
+    return (
+        <>
+            <div id="timer-row" className="flex row space-between align-center">
+                <div className="flex align-center">
+                    <div id="player-tokens-icon"></div>
+                    <p id="player-tokens" className="flex align-center">0</p>
+                </div>
+                <div className="flex align-center">
+                    <Timer
+                        isPaused={isPaused}
+                    />
+                    <button id="pause-btn" onClick={togglePaused}></button>
+                </div>
             </div>
-            <div id="action-btns" className="flex row">
-                {["edit", "erase", "hint", "pencil", "undo"].map((key, i) => {
-                    if (key == "pencil" && pencilState) {
-                        return <button key={i} className={`action-btn ${key} active`} onClick={() => onActionButtonClick(key)}></button>
-                    }
-                    return <button key={i} className={`action-btn ${key}`} onClick={() => onActionButtonClick(key)}></button>
-                })}
+            <div className="flex column align-center" style={{ position: "relative" }}>
+                <div className="cells flex column">{boardElements}</div>
+                <div id="num-btns" className="flex row">
+                    {[...Array(9)].map((_, i) => {
+                        const isActive = (i + 1) === highlightValue;
+                        const isLocked = isActive && immutable;
+                        const isDimmed = !isActive && (immutable || numberTotals[i + 1] === 9);
+
+                        return (
+                            <button
+                                key={i}
+                                className={`num-btn ${isActive ? "active" : ""} ${isLocked ? "locked" : ""} ${isDimmed ? "dimmed" : ""}`}
+                                onClick={() => onNumberButtonClick(i)}>
+                                {i + 1}
+                            </button>
+                        )
+                    })}
+                </div>
+                <div id="action-btns" className="flex row">
+                    {["edit", "erase", "hint", "pencil", "undo"].map((key, i) => {
+                        if (key == "pencil" && pencilState) {
+                            return <button key={i} className={`action-btn ${key} active`} onClick={() => onActionButtonClick(key)}></button>
+                        }
+                        return <button key={i} className={`action-btn ${key}`} onClick={() => onActionButtonClick(key)}></button>
+                    })}
+                </div>
+                <div className={`paused-overlay flex column align-center justify-center ${isPaused ? "active" : ""}`}>
+                    <h3>Game Paused</h3>
+                    <div className="flex">
+                        <button className="btn-solid" onClick={togglePaused}>Resume</button>
+                        <button className="btn-solid accent" onClick={exitGame}>Exit to Menu</button>
+                    </div>
+                    <p id="paused-overlay-error" className="error">something went wrong</p>
+                </div>
             </div>
-        </div>
+        </>
     );
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export function Auth({ fetchState }) {
     const [authFormType, setAuthFormType] = useState("login");
@@ -82,7 +82,7 @@ export function Auth({ fetchState }) {
                 <input className="input-field" name="password" type="password" placeholder="-" />
             </label>
             <button className="btn-solid" type="submit">Submit</button>
-            <p id="login-error">something went wrong</p>
+            <p id="login-error" className="error">something went wrong</p>
             <div id="form-loader"></div>
         </form>)
 }

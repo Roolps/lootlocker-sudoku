@@ -105,5 +105,16 @@ func (ul *userlogin) Authorise(s *session, w http.ResponseWriter) *apiresponse {
 		SameSite: http.SameSiteLaxMode,
 	}
 	http.SetCookie(w, c)
+
+	// set email cookie for easier access by the frontend
+	http.SetCookie(w, &http.Cookie{
+		Name:     "email",
+		Value:    ul.Email,
+		Path:     "/",
+		Domain:   origin,
+		Expires:  time.Now().Add(24 * time.Hour),
+		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
+	})
 	return statusok(nil)
 }

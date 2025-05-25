@@ -1,6 +1,6 @@
 import { Board } from "./Board"
-import { Timer } from "./Timer"
 import { Auth } from "./Auth"
+import { Menu } from "./Menu"
 
 import { useState, useEffect } from 'react';
 
@@ -142,13 +142,9 @@ export default function Sudoku() {
 
         {authenticated ?
           (<>
-            <div id="timer-row" className="flex row space-between">
-              <p id="player-tokens" className="flex align-center">0</p>
-              <Timer />
-            </div>
-
-            {gameState && (
+            {gameState && gameState.length > 0 ? (
               <Board
+                fetchState={fetchState}
                 gameState={gameState}
                 pencilState={pencilState}
                 selection={selection}
@@ -156,8 +152,15 @@ export default function Sudoku() {
                 onNumberButtonClick={handleNumberClick}
                 onActionButtonClick={handleActionButton}
               />
+
+            ) : gameState && gameState.length === 0 ? (
+              <Menu
+                fetchState={fetchState}
+              />
+
+            ) : (
+              <div className="error-message">An error occurred loading the game board.</div>
             )}
-            {!gameState && <div className="error-message">An error occurred loading the game board.</div>}
           </>
           ) : (
             <Auth fetchState={fetchState} />

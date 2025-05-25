@@ -28,6 +28,7 @@ const (
 
 	MetadataActionUpdate MetadataAction = "update"
 	MetadataActionCreate MetadataAction = "create"
+	MetadataActionDelete MetadataAction = "delete"
 )
 
 // https://api.lootlocker.com/game/metadata/source/{source}/id/{source_id}

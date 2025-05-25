@@ -58,6 +58,10 @@ body{
   height: 100%;
 }
 
+button,input{
+  font-family: inherit;
+}
+
 
 .flex{
   display: flex;
@@ -70,6 +74,9 @@ body{
 }
 .align-center{
   align-items: center;
+}
+.align-end{
+  align-items: flex-end;
 }
 .justify-center{
   justify-content: center;
@@ -88,6 +95,10 @@ h1{
   font-weight: 600;
   font-size: 2.4rem;
 }
+h2{
+  font-size: 1.2rem;
+  color: var(--secondary-text);
+}
 #timer-row{
   width: 27.5rem;
   margin: 1rem 0 .5rem;
@@ -99,21 +110,7 @@ h1{
   font-weight: 400;
   color: var(--secondary-text);
 }
-/* #timer::after,
-#player-tokens::before{
-  content: "";
-  display: inline-block;
-  width: 1.5rem;
-  height: 1.5rem;
-  margin-right: .3rem;
-  background-image: url(media/icons/coins.svg);
-  opacity: .5;
-}
-#timer::after{
-  margin-right: 0;
-  margin-left: .3rem;
-  background-image: url(media/icons/pause.svg);
-} */
+
 
 
 .container{
@@ -320,15 +317,21 @@ form label{
 .btn-solid{
   cursor: pointer;
   width: 100%;
-  padding: .9rem;
+  padding: 1rem;
   background-color: var(--accent-green);
   color: var(--accent-green-dark);
   border: none;
   font-family: inherit;
+  font-size: .9rem;
   border-radius: 3rem;
   margin-top: 1rem;
   border: 2px var(--accent-green) solid;
   transition: background-color .2s;
+}
+.btn-solid.accent{
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: #532607;
 }
 .btn-solid:hover{
   background-color: transparent;
@@ -356,16 +359,18 @@ form label{
   pointer-events: none;
 }
 
-#login-error{
+.error{
   color: var(--error-red);
   font-size: .8rem;
   font-weight: 300;
   line-height: 1rem;
   margin: -1rem 0 0;
   opacity: 0;
+  width: 100%;
+  text-align: center;
   transition: margin .2s, opacity .2s;
 }
-#login-error.active{
+.error.active{
   margin: .5rem 0 -.5rem;
   opacity: 1;
 }
@@ -381,6 +386,7 @@ form label{
   padding: .3rem;
   border-bottom: 2px var(--secondary-background-hover) solid;
 }
+.new-game-btn span,
 .radio-label{
   position: relative;
   padding: .9rem;
@@ -393,6 +399,7 @@ form label{
   box-sizing: border-box;
   color: rgba(0,0,0,.5);
 }
+.new-game-btn.active,
 .radio-label.active{
   color: #532607
 }
@@ -411,4 +418,142 @@ form label{
   width: 100%;
   height: 100%;
   opacity: 0;
+}
+
+
+
+
+
+#game-menu{
+  width: 24rem;
+  margin-top: 1.5rem;
+}
+#game-menu .player-profile{
+  margin-top: 5rem;
+  box-sizing: border-box;
+  border-radius: .5rem;
+  /* padding: 1rem 1.5rem;
+  background-color: var(--secondary-background); */
+}
+#game-menu .player-profile p{
+  font-size: .9rem;
+  margin: 0;
+  font-weight: 400;
+}
+#logout-btn{
+  position: relative;
+  background-color: transparent;
+  color: var(--accent);
+  border: none;
+  font-weight: 500;
+  padding: 0rem 1.3rem 0rem 0;
+  cursor: pointer;
+}
+#logout-btn::after{
+  content: "";
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background-image: url(media/icons/logout.svg);
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+
+.new-game-btn-wrap{
+  margin-top: 1.5rem;
+}
+.new-game-btn{
+  padding: .3rem;
+  background-color: var(--secondary-background);
+  border: none;
+  margin: 2px 0;
+  width: 24rem;
+  cursor: pointer;
+}
+.new-game-btn span{
+  width: 100%;
+  display: inline-block;
+  transition: background-color .2s;
+}
+.new-game-btn.active span{
+  background-color: var(--accent);
+}
+.divider{
+  position: relative;
+  margin: 1.5rem 0;
+  height: 2px;
+  background-color: var(--secondary-background);
+  width: 100%;
+}
+.divider p{
+  position: absolute;
+  margin: 0;
+  left: 50%;
+  top: 50%;
+  padding: 1rem;
+  background-color: var(--primary-background);
+  transform: translate(-50%, -50%);
+  font-size: .8rem;
+  color: var(--secondary-background-hover);
+}
+
+
+
+
+
+.paused-overlay{
+  position: absolute;
+  padding-bottom: 10rem;
+  box-sizing: border-box;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, .9);
+  opacity: 0;
+  pointer-events: none;
+}
+.paused-overlay h3{
+  font-size: 1.5rem;
+}
+.paused-overlay .btn-solid{
+  width: 12rem;
+  margin: 0 2px;
+}
+.paused-overlay.active{
+  opacity: 1;
+  pointer-events: all;
+}
+
+
+
+
+#player-tokens-icon,
+#pause-btn{
+  width: 2rem;
+  height: 2rem;
+  background-image: url(media/icons/pause.svg);
+  background-repeat: no-repeat;
+  background-size: 80%;
+  background-position: center;
+  margin-left: .5rem;
+  background-color: transparent;
+  border: none;
+  opacity: .4;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+#player-tokens-icon{
+  background-image: url(media/icons/coins.svg);
+  margin: 0 .5rem 0 0;
+  background-size: 80%;
+}
+#pause-btn:hover{
+  opacity: 1;
 }
