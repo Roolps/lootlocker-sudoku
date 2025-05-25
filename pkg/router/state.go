@@ -2,9 +2,7 @@ package router
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/roolps/lootlocker-sudoku/backend/pkg/lootlocker"
@@ -45,7 +43,11 @@ func (e *stateEndpoint) Get(s *session, w http.ResponseWriter) *apiresponse {
 		return statusok(gameState.Value)
 	}
 
-	gamestate := [][]cell{}
+	// return empty game state as there is none active
+	// this will force user to use the menu
+	return statusok([][]cell{})
+
+	/* gamestate := [][]cell{}
 	raw, err := os.ReadFile(fmt.Sprintf("%v/example_games/easy.json", wd))
 	if err != nil {
 		return statusinternalservererror(err.Error())
@@ -70,7 +72,7 @@ func (e *stateEndpoint) Get(s *session, w http.ResponseWriter) *apiresponse {
 	}); err != nil {
 		return statusinternalservererror(err.Error())
 	}
-	return statusok(gamestate)
+	return statusok(gamestate) */
 }
 
 func (e *stateEndpoint) Post(s *session, w http.ResponseWriter, raw []byte) *apiresponse {

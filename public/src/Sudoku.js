@@ -141,28 +141,30 @@ export default function Sudoku() {
       <div className="board flex column align-center">
         <h1>Lootlocker Sudoku</h1>
 
-        <Menu>
-
-        </Menu>
-
         {authenticated ?
           (<>
-            <div id="timer-row" className="flex row space-between">
-              <p id="player-tokens" className="flex align-center">0</p>
-              <Timer />
-            </div>
+            {gameState && gameState.length > 0 ? (
+              <>
+                <div id="timer-row" className="flex row space-between">
+                  <p id="player-tokens" className="flex align-center">0</p>
+                  <Timer />
+                </div>
+                <Board
+                  gameState={gameState}
+                  pencilState={pencilState}
+                  selection={selection}
+                  onCellClick={handleClick}
+                  onNumberButtonClick={handleNumberClick}
+                  onActionButtonClick={handleActionButton}
+                />
+              </>
 
-            {gameState && (
-              <Board
-                gameState={gameState}
-                pencilState={pencilState}
-                selection={selection}
-                onCellClick={handleClick}
-                onNumberButtonClick={handleNumberClick}
-                onActionButtonClick={handleActionButton}
-              />
+            ) : gameState && gameState.length === 0 ? (
+              <Menu />
+              
+            ) : (
+              <div className="error-message">An error occurred loading the game board.</div>
             )}
-            {!gameState && <div className="error-message">An error occurred loading the game board.</div>}
           </>
           ) : (
             <Auth fetchState={fetchState} />

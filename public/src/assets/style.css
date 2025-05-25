@@ -367,16 +367,18 @@ form label{
   pointer-events: none;
 }
 
-#login-error{
+.error{
   color: var(--error-red);
   font-size: .8rem;
   font-weight: 300;
   line-height: 1rem;
   margin: -1rem 0 0;
   opacity: 0;
+  width: 100%;
+  text-align: center;
   transition: margin .2s, opacity .2s;
 }
-#login-error.active{
+.error.active{
   margin: .5rem 0 -.5rem;
   opacity: 1;
 }
@@ -452,6 +454,7 @@ form label{
   border: none;
   font-weight: 500;
   padding: 0rem 1.3rem 0rem 0;
+  cursor: pointer;
 }
 #logout-btn::after{
   content: "";

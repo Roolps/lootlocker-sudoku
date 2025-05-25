@@ -1,10 +1,38 @@
 import { useState } from 'react';
 
-export function Menu() {
+export function Menu({ fetchState }) {
     const [selectedDifficulty, setSelectedDifficulty] = useState("easy");
 
     // send a post request to start the game
-    function startgame(){
+    async function startgame() {
+        try {
+            const response = await fetch(`/api/game`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    difficulty: selectedDifficulty,
+                })
+            });
+
+            if(!response.ok){
+                const error = await response.json().catch(() => ({}));
+
+                throw new Error(`Start game failed with status ${response.status} : ${error.message}`);
+            }
+
+            // game was started - fetch the state!
+            fetchState()
+        } catch (err) {
+            console.error(err.message);
+        
+            const errorMsg = document.getElementById("start-game-error")
+            errorMsg.innerHTML = err.message
+            errorMsg.classList.add("active")
+
+            setTimeout(() => {
+                errorMsg.classList.remove("active")
+            }, 5000);
+        }
 
     }
 
@@ -37,7 +65,8 @@ export function Menu() {
                 ><span>Upload Custom</span>
                 </button>
 
-                <button className="btn-solid">Start Game</button>
+                <button className="btn-solid" onClick={startgame}>Start Game</button>
+                <p id="start-game-error" className="error">something went wrong</p>
             </div>
 
             <div className="player-profile flex space-between align-center">
