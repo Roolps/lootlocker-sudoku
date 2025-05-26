@@ -32,7 +32,6 @@ export function Auth({ fetchState, setPlayerBalance }) {
             // player balance is returned from the login call
             setPlayerBalance(parseInt(data.data));
             fetchState();
-
         } catch (err) {
             // hide the loader
             if (loader) loader.classList.add("hidden");

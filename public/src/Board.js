@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Timer } from "./Timer";
 import { ActionButtons } from "./ActionButtons";
 
-export function Board({ setGameState, setPencilMarks, gameState, pencilState, exitGame, finishGame, playerBalance }) {
+export function Board({ setGameState, setPencilMarks, fetchPlayer, gameState, pencilState, exitGame, finishGame, playerBalance }) {
     const [isPaused, setIsPaused] = useState(false);
     const [selection, setSelection] = useState({ row: 0, col: 0 });
 
@@ -202,6 +202,7 @@ export function Board({ setGameState, setPencilMarks, gameState, pencilState, ex
             }
 
             setGameState([]);
+            fetchPlayer();
         } catch (err) {
             console.error(err.message);
 
@@ -230,6 +231,7 @@ export function Board({ setGameState, setPencilMarks, gameState, pencilState, ex
             }
 
             setGameState([]);
+            fetchPlayer();
         } catch (err) {
             console.error(err.message);
 

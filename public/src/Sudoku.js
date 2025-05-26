@@ -75,7 +75,7 @@ export default function Sudoku() {
 
       const data = await response.json();
 
-      setPlayerState(data["data"])
+      setPlayerState(data["data"]);
     } catch (err) {
       console.error(err.message);
     }
@@ -92,6 +92,7 @@ export default function Sudoku() {
               <Board
                 setGameState={setGameState}
                 setPencilMarks={setPencilMarks}
+                fetchPlayer={fetchPlayer}
 
                 gameState={gameState}
                 pencilState={pencilState}

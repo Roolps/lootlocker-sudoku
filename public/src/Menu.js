@@ -66,7 +66,7 @@ export function Menu({ fetchState }) {
         <div id="game-menu" className="flex column align-center">
             <div className="flex column align-start">
                 <div className="new-game-btn-wrap flex column align-center">
-                    {/* <h2>Select Difficulty</h2> */}
+                    {/* <h3>Select Difficulty</h3> */}
                     <button
                         className={`new-game-btn ${selectedDifficulty === "easy" ? "active" : ""}`}
                         onClick={() => setSelectedDifficulty("easy")}
