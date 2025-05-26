@@ -61,7 +61,25 @@ func (e *stateEndpoint) Get(s *session, w http.ResponseWriter) *apiresponse {
 		return statusinternalservererror(err.Error())
 	}
 	if gameState, ok := metadata["current_state"]; ok {
-		return statusok(gameState.Value)
+		start, ok := metadata["start_time"]
+		if !ok {
+			starttime := time.Now().Unix()
+			start = lootlocker.Metadata{
+				Access: []string{
+					"game_api.read",
+					"game_api.write",
+				},
+				Key:    "start_time",
+				Tags:   []string{},
+				Value:  starttime,
+				Type:   lootlocker.MetadataTypeNumber,
+				Action: lootlocker.MetadataActionCreate,
+			}
+			if err := lootlockerClient.UpdatePlayerMetadata(s.Token, []lootlocker.Metadata{start}); err != nil {
+				return statusinternalservererror(err.Error())
+			}
+		}
+		return statusok(map[string]any{"state": gameState.Value, "start_time": start.Value})
 	}
 
 	// return empty game state as there is none active

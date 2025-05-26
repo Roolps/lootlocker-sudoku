@@ -11,6 +11,7 @@ export default function Sudoku() {
   const [authenticated, setAuthenticated] = useState(false);
 
   const [playerState, setPlayerState] = useState({})
+  const [startTime, setStartTime] = useState(0)
 
   useEffect(() => {
     fetchState();
@@ -55,7 +56,9 @@ export default function Sudoku() {
       if (authenticated == false) {
         setAuthenticated(true);
       }
-      setGameState(data["data"]);
+      setGameState(data.data.state);
+      setStartTime(data.data.start_time);
+
     } catch (err) {
       console.error(err.message);
     }
@@ -96,8 +99,8 @@ export default function Sudoku() {
 
                 gameState={gameState}
                 pencilState={pencilState}
-
-                playerBalance={playerState["balance"]}
+                
+                playerBalance={playerState.balance}
               />
             ) : gameState && gameState.length === 0 ? (
               <Menu

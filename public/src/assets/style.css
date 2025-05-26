@@ -597,3 +597,6 @@ h3{
 #pause-btn:hover{
   opacity: 1;
 }
+#pause-btn.paused{
+  background-image: url(media/icons/play.svg);
+}

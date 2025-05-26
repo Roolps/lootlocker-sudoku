@@ -256,7 +256,7 @@ export function Board({ setGameState, setPencilMarks, fetchPlayer, gameState, pe
                     <Timer
                         isPaused={isPaused}
                     />
-                    <button id="pause-btn" onClick={togglePause}></button>
+                    <button id="pause-btn" className={isPaused ? "paused" : ""} onClick={togglePause}></button>
                 </div>
             </div>
             <div className="flex column align-center" style={{ position: "relative" }}>
