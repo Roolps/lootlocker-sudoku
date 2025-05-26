@@ -252,11 +252,11 @@ func (gb gameboard) verifyGameComplete() bool {
 	return allRowsValid && allColsValid
 }
 
-type User struct {
+type playerEndpoint struct {
 	Balance float64 `json:"balance"`
 }
 
-func (u *User) Get(s *session, w http.ResponseWriter) *apiresponse {
+func (u *playerEndpoint) Get(s *session, w http.ResponseWriter) *apiresponse {
 	wall, err := lootlockerClient.GetWalletForHolder(s.Token, s.PlayerID)
 	if err != nil {
 		logger.Error(err)

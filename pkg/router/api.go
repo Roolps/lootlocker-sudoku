@@ -82,6 +82,8 @@ func whichGetEndpoint(e string) getEndpoint {
 	switch e {
 	case "/state":
 		return &stateEndpoint{}
+	case "/player":
+		return &playerEndpoint{}
 	}
 	return nil
 }
