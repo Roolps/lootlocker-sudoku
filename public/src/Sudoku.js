@@ -9,16 +9,11 @@ export default function Sudoku() {
   const [pencilState, setPencilMarks] = useState(false);
 
   const [authenticated, setAuthenticated] = useState(false);
+  const [playerBalance, setPlayerBalance] = useState(0);
 
   useEffect(() => {
     fetchState();
   }, []);
-
-  useEffect(() => {
-    if (Array.isArray(gameState)) {
-      verifyResult();
-    }
-  }, [gameState]);
 
   async function fetchState() {
     try {
@@ -55,32 +50,6 @@ export default function Sudoku() {
     }
   }
 
-  // check to see if the puzzle is complete
-  function verifyResult() {
-    var rows = Array.from({ length: 9 }, () => []);
-    var columns = Array.from({ length: 9 }, () => []);
-
-    gameState.forEach((row, i) => {
-      row.forEach((cell, j) => {
-        const val = cell.value ?? 0;
-        rows[i].push(val);
-        columns[j].push(val);
-      })
-    })
-
-    const allRowsValid = rows.every(isValidGroup);
-    const allColsValid = columns.every(isValidGroup);
-
-    // if these are both valid then the solution is complete + valid!
-    console.log(allRowsValid && allColsValid);
-  }
-
-  function isValidGroup(group) {
-    const sorted = [...group].sort((a, b) => a - b);
-    const expected = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-    return JSON.stringify(sorted) === JSON.stringify(expected);
-  }
-
   return (
     <div className="container flex row align-center justify-center">
       <div className="board flex column align-center">
@@ -90,25 +59,27 @@ export default function Sudoku() {
           (<>
             {gameState && gameState.length > 0 ? (
               <Board
-                fetchState={fetchState}
                 setGameState={setGameState}
                 setPencilMarks={setPencilMarks}
 
                 gameState={gameState}
                 pencilState={pencilState}
-              />
 
+                playerBalance={playerBalance}
+              />
             ) : gameState && gameState.length === 0 ? (
               <Menu
                 fetchState={fetchState}
               />
-
             ) : (
               <div className="error-message">An error occurred loading the game board.</div>
             )}
           </>
           ) : (
-            <Auth fetchState={fetchState} />
+            <Auth
+              fetchState={fetchState}
+              setPlayerBalance={setPlayerBalance}
+            />
           )}
 
         <a id="powered-by-lootlocker" href="https://lootlocker.com/" target="_blank">Made using <span>Lootlocker</span></a>

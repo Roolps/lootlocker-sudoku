@@ -33,9 +33,9 @@ func (s *session) apiRequest(path string, w http.ResponseWriter, r *http.Request
 		}
 	case http.MethodDelete:
 		obj := whichDeleteEndpoint(path)
-		if obj != nil{
+		if obj != nil {
 			raw, err := io.ReadAll(r.Body)
-			if err != nil && err != io.EOF{
+			if err != nil && err != io.EOF {
 				return statusinternalservererror(err.Error())
 			}
 			return obj.Delete(s, w, raw)
@@ -110,6 +110,8 @@ func whichDeleteEndpoint(e string) deleteEndpoint {
 	switch e {
 	case "/state":
 		return &stateEndpoint{}
+	case "/game":
+		return &gameEndpoint{}
 	}
 	return nil
 }

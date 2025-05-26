@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export function Auth({ fetchState }) {
+export function Auth({ fetchState, setPlayerBalance }) {
     const [authFormType, setAuthFormType] = useState("login");
 
     async function auth(formdata) {
@@ -27,7 +27,10 @@ export function Auth({ fetchState }) {
                 throw new Error(`Login failed with status ${response.status} : ${error.message}`);
             }
 
-            // login was successful - fetch state :)
+            const data = await response.json();
+
+            // player balance is returned from the login call
+            setPlayerBalance(parseInt(data.data));
             fetchState();
 
         } catch (err) {
@@ -51,7 +54,7 @@ export function Auth({ fetchState }) {
         <form className="flex column align-center" action={auth}>
             <div className="flex align-center space-between radio-wrap">
                 <div className="backer" style={{ left: authFormType === "signup" ? ".3rem" : "50%" }}></div>
-                <label style={{marginRight: ".15rem"}} className={`radio-label ${authFormType === "signup" ? "active" : ""}`}>
+                <label style={{ marginRight: ".15rem" }} className={`radio-label ${authFormType === "signup" ? "active" : ""}`}>
                     Signup
                     <input
                         type="radio"
@@ -62,7 +65,7 @@ export function Auth({ fetchState }) {
                     />
                 </label>
 
-                <label style={{marginLeft: ".15rem"}} className={`radio-label ${authFormType === "login" ? "active" : ""}`}>
+                <label style={{ marginLeft: ".15rem" }} className={`radio-label ${authFormType === "login" ? "active" : ""}`}>
                     Login
                     <input
                         type="radio"

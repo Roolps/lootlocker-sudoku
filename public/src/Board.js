@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Timer } from "./Timer";
 import { ActionButtons } from "./ActionButtons";
 
-export function Board({ fetchState, setGameState, setPencilMarks, gameState, pencilState }) {
+export function Board({ setGameState, setPencilMarks, gameState, pencilState, exitGame, finishGame, playerBalance }) {
     const [isPaused, setIsPaused] = useState(false);
     const [selection, setSelection] = useState({ row: 0, col: 0 });
 
@@ -102,6 +102,8 @@ export function Board({ fetchState, setGameState, setPencilMarks, gameState, pen
 
     // handle numberbutton click
     function handleNumberButton(number) {
+        if (isPaused) return;
+
         let newGameState = gameState.map(row => row.slice());
         let cell = gameState[selection.row][selection.col];
 
@@ -144,6 +146,75 @@ export function Board({ fetchState, setGameState, setPencilMarks, gameState, pen
         setGameState(newGameState);
     }
 
+
+    function togglePause() {
+        setIsPaused(prev => !prev)
+    }
+
+    useEffect(() => {
+        if (Array.isArray(gameState)) {
+            verifyResult();
+        }
+    }, [gameState]);
+
+    // check to see if the puzzle is complete
+    function verifyResult() {
+        var rows = Array.from({ length: 9 }, () => []);
+        var columns = Array.from({ length: 9 }, () => []);
+
+        gameState.forEach((row, i) => {
+            row.forEach((cell, j) => {
+                const val = cell.value ?? 0;
+                rows[i].push(val);
+                columns[j].push(val);
+            })
+        })
+
+        const allRowsValid = rows.every(isValidGroup);
+        const allColsValid = columns.every(isValidGroup);
+
+        // if these are both valid then the solution is complete + valid!
+        if (allRowsValid && allColsValid) {
+            // run a complete game request and reset the game state
+            document.getElementById("game-finished-popup").classList.add("active");
+            setIsPaused(true);
+        }
+    }
+
+    function isValidGroup(group) {
+        const sorted = [...group].sort((a, b) => a - b);
+        const expected = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        return JSON.stringify(sorted) === JSON.stringify(expected);
+    }
+
+    // call to finish the game
+    async function finishGame() {
+        try {
+            const response = await fetch(`/api/game`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+            });
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+
+                throw new Error(`Finish game failed with status ${response.status} : ${error.message}`);
+            }
+
+            setGameState([]);
+        } catch (err) {
+            console.error(err.message);
+
+            const errorMsg = document.getElementById("finished-overlay-error");
+            errorMsg.innerHTML = err.message;
+            errorMsg.classList.add("active");
+
+            setTimeout(() => {
+                errorMsg.classList.remove("active");
+            }, 5000);
+        }
+    }
+
     // clear the board and exit game
     async function exitGame() {
         try {
@@ -155,11 +226,10 @@ export function Board({ fetchState, setGameState, setPencilMarks, gameState, pen
             if (!response.ok) {
                 const error = await response.json().catch(() => ({}));
 
-                throw new Error(`Start game failed with status ${response.status} : ${error.message}`);
+                throw new Error(`Exit game failed with status ${response.status} : ${error.message}`);
             }
 
-            // state was deleted - fetch a new one to reset
-            fetchState();
+            setGameState([]);
         } catch (err) {
             console.error(err.message);
 
@@ -173,16 +243,12 @@ export function Board({ fetchState, setGameState, setPencilMarks, gameState, pen
         }
     }
 
-    function togglePause() {
-        setIsPaused(prev => !prev)
-    }
-
     return (
         <>
             <div id="timer-row" className="flex row space-between align-center">
                 <div className="flex align-center">
                     <div id="player-tokens-icon"></div>
-                    <p id="player-tokens" className="flex align-center">0</p>
+                    <p id="player-tokens" className="flex align-center">{playerBalance}</p>
                 </div>
                 <div className="flex align-center">
                     <Timer
@@ -213,13 +279,21 @@ export function Board({ fetchState, setGameState, setPencilMarks, gameState, pen
                     setPencilMarks={setPencilMarks}
                     pencilState={pencilState}
                 ></ActionButtons>
-                <div className={`paused-overlay flex column align-center justify-center ${isPaused ? "active" : ""}`}>
+                <div className={`popup flex column align-center justify-center ${isPaused ? "active" : ""}`}>
                     <h3>Game Paused</h3>
+                    <p>Returning to menu will reset your progress.</p>
                     <div className="flex">
                         <button className="btn-solid" onClick={togglePause}>Resume</button>
                         <button className="btn-solid accent" onClick={exitGame}>Exit to Menu</button>
                     </div>
                     <p id="paused-overlay-error" className="error">something went wrong</p>
+                </div>
+                <div id="game-finished-popup" className="popup flex column align-center justify-center">
+                    <h3>Woohoo! Good Job</h3>
+                    <p>You have completed this level.</p>
+                    <p className="score">+100 GridBits</p>
+                    <button className="btn-solid accent" onClick={finishGame}>Exit to Menu</button>
+                    <p id="finished-overlay-error" className="error">something went wrong</p>
                 </div>
             </div>
         </>
