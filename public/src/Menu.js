@@ -69,16 +69,19 @@ export function Menu({ fetchState }) {
                     {/* <h3>Select Difficulty</h3> */}
                     <button
                         className={`new-game-btn ${selectedDifficulty === "easy" ? "active" : ""}`}
-                        onClick={() => setSelectedDifficulty("easy")}
-                    ><span>Easy</span></button>
+                        onClick={() => setSelectedDifficulty("easy")}>
+                        <span>Easy<br></br><sup>+50 GridBits</sup></span>
+                    </button>
                     <button
-                        className={`new-game-btn ${selectedDifficulty === "medium" ? "active" : ""}`}
-                        onClick={() => setSelectedDifficulty("medium")}
-                    ><span>Medium</span></button>
+                        className={`new-game-btn coming-soon ${selectedDifficulty === "medium" ? "active" : ""}`}
+                        onClick={() => setSelectedDifficulty("medium")}>
+                        <span>Medium<br></br><sup>+100 GridBits</sup></span>
+                    </button>
                     <button
-                        className={`new-game-btn ${selectedDifficulty === "hard" ? "active" : ""}`}
-                        onClick={() => setSelectedDifficulty("hard")}
-                    ><span>Hard</span></button>
+                        className={`new-game-btn coming-soon ${selectedDifficulty === "hard" ? "active" : ""}`}
+                        onClick={() => setSelectedDifficulty("hard")}>
+                        <span>Hard<br></br><sup>+150 GridBits</sup></span>
+                    </button>
                 </div>
 
                 <div className="divider">
@@ -86,9 +89,9 @@ export function Menu({ fetchState }) {
                 </div>
 
                 <button id="custom-upload-btn"
-                    className={`new-game-btn ${selectedDifficulty === "custom" ? "active" : ""}`}
-                    onClick={() => setSelectedDifficulty("custom")}
-                ><span>Upload Custom</span>
+                    className={`new-game-btn coming-soon ${selectedDifficulty === "custom" ? "active" : ""}`}
+                    onClick={() => setSelectedDifficulty("custom")}>
+                    <span>Upload Custom<br></br><sup>Click to upload</sup></span>
                 </button>
 
                 <button className="btn-solid" onClick={startgame}>Start Game</button>

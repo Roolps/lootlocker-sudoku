@@ -307,6 +307,7 @@ form label{
   font-size: .9rem;
   border-bottom: 2px var(--secondary-background-hover) solid;
   border-radius: .3rem .3rem 0 0;
+  box-sizing: border-box;
   transition: background-color .2s, border-color .2s;
 }
 .input-field:focus{
@@ -469,17 +470,32 @@ form label{
   margin-top: 1.5rem;
 }
 .new-game-btn{
+  position: relative;
   padding: .3rem;
   background-color: var(--secondary-background);
   border: none;
   margin: 2px 0;
   width: 24rem;
   cursor: pointer;
+  border-radius: .5rem;
 }
 .new-game-btn span{
   width: 100%;
   display: inline-block;
+  border-radius: .3rem;
+  padding: .9rem .9rem .6rem;
   transition: background-color .2s;
+}
+.new-game-btn.coming-soon{
+  pointer-events: none;
+}
+.new-game-btn.coming-soon::after{
+  content: "Coming Soon";
+  position: absolute;
+  top: .6rem;
+  right: 1rem;
+  font-size: .8rem;
+  opacity: .5;
 }
 .new-game-btn.active span{
   background-color: var(--accent);

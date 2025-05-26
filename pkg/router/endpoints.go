@@ -141,6 +141,24 @@ func (e *gameEndpoint) Post(s *session, w http.ResponseWriter, raw []byte) *apir
 	}); err != nil {
 		return statusinternalservererror(err.Error())
 	}
+
+	// create start time metadata
+	startTime := time.Now().Unix()
+	if err := lootlockerClient.UpdatePlayerMetadata(s.Token, []lootlocker.Metadata{
+		{
+			Access: []string{
+				"game_api.read",
+				"game_api.write",
+			},
+			Key:    "start_time",
+			Tags:   []string{},
+			Value:  startTime,
+			Type:   lootlocker.MetadataTypeNumber,
+			Action: lootlocker.MetadataActionCreate,
+		},
+	}); err != nil {
+		return statusinternalservererror(err.Error())
+	}
 	return statusok(gamestate)
 }
 
@@ -185,7 +203,7 @@ func (e *gameEndpoint) Delete(s *session, w http.ResponseWriter, raw []byte) *ap
 			return statusinternalservererror(err.Error())
 		}
 		// add reward to player wallet
-		if err := lootlockerClient.CreditBalance(s.Token, &lootlocker.Credit{Amount: "100", WalletID: wall.ID, CurrencyID: LOOTLOCKER_CURRENCY_ID}); err != nil {
+		if err := lootlockerClient.CreditBalance(s.Token, &lootlocker.Credit{Amount: "50", WalletID: wall.ID, CurrencyID: LOOTLOCKER_CURRENCY_ID}); err != nil {
 			return statusinternalservererror(err.Error())
 		}
 

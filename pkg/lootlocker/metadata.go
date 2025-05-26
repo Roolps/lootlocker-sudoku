@@ -22,7 +22,8 @@ type MetadataSource string
 type MetadataAction string
 
 const (
-	MetadataTypeJSON MetadataType = "json"
+	MetadataTypeJSON   MetadataType = "json"
+	MetadataTypeNumber MetadataType = "number"
 
 	MetadataSourcePlayer MetadataSource = "player"
 
