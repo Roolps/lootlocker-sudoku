@@ -10,8 +10,8 @@ export default function Sudoku() {
 
   const [authenticated, setAuthenticated] = useState(false);
 
-  const [playerState, setPlayerState] = useState({})
-  const [initialStartTime, setInitialStartTime] = useState(0)
+  const [playerState, setPlayerState] = useState({});
+  const [initialStartTime, setInitialStartTime] = useState(0);
 
   useEffect(() => {
     fetchState();

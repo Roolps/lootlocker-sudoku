@@ -557,6 +557,7 @@ h3{
   margin-top: 0;
   padding-left: 2rem;
   color: rgba(0,0,0,.5);
+  font-weight: 600;
 }
 .popup .score::before{
   width: 1.5rem !important;

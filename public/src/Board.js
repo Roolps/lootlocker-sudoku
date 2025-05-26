@@ -294,7 +294,7 @@ export function Board({ setGameState, setPencilMarks, fetchPlayer, gameState, pe
                 <div id="game-finished-popup" className="popup flex column align-center justify-center">
                     <h3>Woohoo! Good Job</h3>
                     <p>You have completed this level.</p>
-                    <p className="score">+100 GridBits</p>
+                    <p className="score">+50 GridBits</p>
                     <button className="btn-solid accent" onClick={finishGame}>Exit to Menu</button>
                     <p id="finished-overlay-error" className="error">something went wrong</p>
                 </div>

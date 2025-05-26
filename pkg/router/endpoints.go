@@ -114,6 +114,9 @@ func (e *stateEndpoint) Delete(s *session, w http.ResponseWriter, raw []byte) *a
 	if err := lootlockerClient.UpdatePlayerMetadata(s.Token, []lootlocker.Metadata{{
 		Key:    "current_state",
 		Action: lootlocker.MetadataActionDelete,
+	}, {
+		Key:    "start_time",
+		Action: lootlocker.MetadataActionDelete,
 	}}); err != nil {
 		return statusinternalservererror(err.Error())
 	}
@@ -225,9 +228,12 @@ func (e *gameEndpoint) Delete(s *session, w http.ResponseWriter, raw []byte) *ap
 			return statusinternalservererror(err.Error())
 		}
 
-		// delete metadata value
+		// delete metadata state + start time
 		if err := lootlockerClient.UpdatePlayerMetadata(s.Token, []lootlocker.Metadata{{
 			Key:    "current_state",
+			Action: lootlocker.MetadataActionDelete,
+		}, {
+			Key:    "start_time",
 			Action: lootlocker.MetadataActionDelete,
 		}}); err != nil {
 			return statusinternalservererror(err.Error())
