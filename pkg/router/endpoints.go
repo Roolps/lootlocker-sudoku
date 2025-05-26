@@ -251,3 +251,23 @@ func (gb gameboard) verifyGameComplete() bool {
 	}
 	return allRowsValid && allColsValid
 }
+
+type User struct {
+	Balance float64 `json:"balance"`
+}
+
+func (u *User) Get(s *session, w http.ResponseWriter) *apiresponse {
+	wall, err := lootlockerClient.GetWalletForHolder(s.Token, s.PlayerID)
+	if err != nil {
+		logger.Error(err)
+		return statusinternalservererror(err.Error())
+	}
+	// add reward to player wallet
+	balances, err := lootlockerClient.GetBalances(s.Token, wall.ID)
+	if err != nil {
+		logger.Error(err)
+		return statusinternalservererror(err.Error())
+	}
+	u.Balance = balances[LOOTLOCKER_CURRENCY_ID].Amount
+	return statusok(u)
+}

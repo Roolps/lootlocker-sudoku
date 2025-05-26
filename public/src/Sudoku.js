@@ -9,11 +9,18 @@ export default function Sudoku() {
   const [pencilState, setPencilMarks] = useState(false);
 
   const [authenticated, setAuthenticated] = useState(false);
-  const [playerBalance, setPlayerBalance] = useState(0);
+
+  const [playerState, setPlayerState] = useState({})
 
   useEffect(() => {
     fetchState();
   }, []);
+
+  useEffect(() => {
+    if (authenticated) {
+      fetchPlayer();
+    }
+  }, [authenticated]);
 
   async function fetchState() {
     try {
@@ -43,8 +50,32 @@ export default function Sudoku() {
 
       // user is logged in because it succeeded so
       // enforce that log in state is true
-      setAuthenticated(true);
+
+      // moved this to only if false - this will stop calling the user's balance multiple times
+      if (authenticated == false) {
+        setAuthenticated(true);
+      }
       setGameState(data["data"]);
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
+  async function fetchPlayer() {
+    try {
+      const response = await fetch("/api/player", {
+        method: "GET",
+        headers: { "Accept": "application/json" },
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(`Get State failed with status ${response.status} : ${error.message}`);
+      }
+
+      const data = await response.json();
+
+      setPlayerState(data["data"])
     } catch (err) {
       console.error(err.message);
     }
@@ -65,7 +96,7 @@ export default function Sudoku() {
                 gameState={gameState}
                 pencilState={pencilState}
 
-                playerBalance={playerBalance}
+                playerBalance={playerState["balance"]}
               />
             ) : gameState && gameState.length === 0 ? (
               <Menu
@@ -78,7 +109,6 @@ export default function Sudoku() {
           ) : (
             <Auth
               fetchState={fetchState}
-              setPlayerBalance={setPlayerBalance}
             />
           )}
 

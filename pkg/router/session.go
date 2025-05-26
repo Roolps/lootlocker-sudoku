@@ -116,17 +116,5 @@ func (ul *userlogin) Authorise(s *session, w http.ResponseWriter) *apiresponse {
 		Secure:   true,
 		SameSite: http.SameSiteLaxMode,
 	})
-
-	wall, err := lootlockerClient.GetWalletForHolder(gameSession.SessionToken, sessionInfo.ID)
-	if err != nil {
-		logger.Error(err)
-		return statusinternalservererror(err.Error())
-	}
-	// add reward to player wallet
-	balances, err := lootlockerClient.GetBalances(gameSession.SessionToken, wall.ID)
-	if err != nil {
-		logger.Error(err)
-		return statusinternalservererror(err.Error())
-	}
-	return statusok(balances[LOOTLOCKER_CURRENCY_ID].Amount)
+	return statusok(nil)
 }
