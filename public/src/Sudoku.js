@@ -56,7 +56,8 @@ export default function Sudoku() {
       if (authenticated == false) {
         setAuthenticated(true);
       }
-      setGameState(data.data.state);
+      console.log(data)
+      setGameState(data.data["state"]);
       setInitialStartTime(data.data.start_time);
 
     } catch (err) {

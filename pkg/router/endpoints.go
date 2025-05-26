@@ -84,7 +84,7 @@ func (e *stateEndpoint) Get(s *session, w http.ResponseWriter) *apiresponse {
 
 	// return empty game state as there is none active
 	// this will force user to use the menu
-	return statusok([][]cell{})
+	return statusok(map[string]any{"state": [][]cell{}, "start_time": 0})
 }
 
 func (e *stateEndpoint) Post(s *session, w http.ResponseWriter, raw []byte) *apiresponse {
