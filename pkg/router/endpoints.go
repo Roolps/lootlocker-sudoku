@@ -171,78 +171,83 @@ func (e *gameEndpoint) Delete(s *session, w http.ResponseWriter, raw []byte) *ap
 		if err != nil {
 			return statusinternalservererror(err.Error())
 		}
-		cells := [][]cell{}
+		cells := gameboard{}
 		if err := json.Unmarshal(raw, &cells); err != nil {
 			return statusinternalservererror(err.Error())
 		}
-		logger.Info(cells)
 
-		isValidGroup := func(group []int) bool {
-			if len(group) != 9 {
-				return false
-			}
-			expected := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
-			sort.Ints(group)
-			for i := range group {
-				if group[i] != expected[i] {
-					return false
-				}
-			}
-			return true
+		if !cells.verifyGameComplete() {
+			return statusnotacceptable("puzzle is incomplete")
 		}
 
-		rows := make([][]int, 9)
-		cols := make([][]int, 9)
-
-		for i := 0; i < 9; i++ {
-			rows[i] = make([]int, 0, 9)
-			cols[i] = make([]int, 0, 9)
+		wall, err := lootlockerClient.GetWalletForHolder(s.Token, s.PlayerID)
+		if err != nil {
+			return statusinternalservererror(err.Error())
+		}
+		// add reward to player wallet
+		if err := lootlockerClient.CreditBalance(s.Token, &lootlocker.Credit{Amount: "100", WalletID: wall.ID, CurrencyID: LOOTLOCKER_CURRENCY_ID}); err != nil {
+			return statusinternalservererror(err.Error())
 		}
 
-		for i := range cells {
-			for j := range cells[i] {
-				val := cells[i][j].Value
-				rows[i] = append(rows[i], val)
-				cols[j] = append(cols[j], val)
-			}
+		// delete metadata value
+		if err := lootlockerClient.UpdatePlayerMetadata(s.Token, []lootlocker.Metadata{{
+			Key:    "current_state",
+			Action: lootlocker.MetadataActionDelete,
+		}}); err != nil {
+			return statusinternalservererror(err.Error())
 		}
-
-		allRowsValid := true
-		for _, row := range rows {
-			if !isValidGroup(row) {
-				allRowsValid = false
-				break
-			}
-		}
-
-		allColsValid := true
-		for _, col := range cols {
-			if !isValidGroup(col) {
-				allColsValid = false
-				break
-			}
-		}
-
-		if allRowsValid && allColsValid {
-			wall, err := lootlockerClient.GetWalletForHolder(s.Token, s.PlayerID)
-			if err != nil {
-				return statusinternalservererror(err.Error())
-			}
-			// add reward to player wallet
-			if err := lootlockerClient.CreditBalance(s.Token, &lootlocker.Credit{Amount: "100", WalletID: wall.ID, CurrencyID: LOOTLOCKER_CURRENCY_ID}); err != nil {
-				return statusinternalservererror(err.Error())
-			}
-
-			// delete metadata value
-			if err := lootlockerClient.UpdatePlayerMetadata(s.Token, []lootlocker.Metadata{{
-				Key:    "current_state",
-				Action: lootlocker.MetadataActionDelete,
-			}}); err != nil {
-				return statusinternalservererror(err.Error())
-			}
-			return statusok(nil)
-		}
-		return statusnotacceptable("puzzle is incorrect")
+		return statusok(nil)
 	}
 	return statusnotacceptable("no game state was found for the user")
+}
+
+type gameboard [][]cell
+
+func (gb gameboard) verifyGameComplete() bool {
+	isValidGroup := func(group []int) bool {
+		if len(group) != 9 {
+			return false
+		}
+		expected := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+		sort.Ints(group)
+		for i := range group {
+			if group[i] != expected[i] {
+				return false
+			}
+		}
+		return true
+	}
+
+	rows := make([][]int, 9)
+	cols := make([][]int, 9)
+
+	for i := 0; i < 9; i++ {
+		rows[i] = make([]int, 0, 9)
+		cols[i] = make([]int, 0, 9)
+	}
+
+	for i := range gb {
+		for j := range gb[i] {
+			val := gb[i][j].Value
+			rows[i] = append(rows[i], val)
+			cols[j] = append(cols[j], val)
+		}
+	}
+
+	allRowsValid := true
+	for _, row := range rows {
+		if !isValidGroup(row) {
+			allRowsValid = false
+			break
+		}
+	}
+
+	allColsValid := true
+	for _, col := range cols {
+		if !isValidGroup(col) {
+			allColsValid = false
+			break
+		}
+	}
+	return allRowsValid && allColsValid
 }
