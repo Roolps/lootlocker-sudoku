@@ -14,12 +14,6 @@ export default function Sudoku() {
     fetchState();
   }, []);
 
-  useEffect(() => {
-    if (Array.isArray(gameState)) {
-      verifyResult();
-    }
-  }, [gameState]);
-
   async function fetchState() {
     try {
       const response = await fetch("/api/state", {
@@ -55,91 +49,6 @@ export default function Sudoku() {
     }
   }
 
-  // check to see if the puzzle is complete
-  function verifyResult() {
-    var rows = Array.from({ length: 9 }, () => []);
-    var columns = Array.from({ length: 9 }, () => []);
-
-    gameState.forEach((row, i) => {
-      row.forEach((cell, j) => {
-        const val = cell.value ?? 0;
-        rows[i].push(val);
-        columns[j].push(val);
-      })
-    })
-
-    const allRowsValid = rows.every(isValidGroup);
-    const allColsValid = columns.every(isValidGroup);
-
-    // if these are both valid then the solution is complete + valid!
-    if (allRowsValid && allColsValid) {
-      // run a complete game request and reset the game state
-      document.getElementById("game-finished-popup").classList.add("active")
-    }
-  }
-
-  function isValidGroup(group) {
-    const sorted = [...group].sort((a, b) => a - b);
-    const expected = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-    return JSON.stringify(sorted) === JSON.stringify(expected);
-  }
-
-  // call to finish the game
-  async function finishGame() {
-    try {
-      const response = await fetch(`/api/game`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
-
-        throw new Error(`Finish game failed with status ${response.status} : ${error.message}`);
-      }
-
-      setGameState([]);
-    } catch (err) {
-      console.error(err.message);
-
-      const errorMsg = document.getElementById("finished-overlay-error");
-      errorMsg.innerHTML = err.message;
-      errorMsg.classList.add("active");
-
-      setTimeout(() => {
-        errorMsg.classList.remove("active");
-      }, 5000);
-    }
-  }
-
-  // clear the board and exit game
-  async function exitGame() {
-    try {
-      const response = await fetch(`/api/state`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
-
-        throw new Error(`Exit game failed with status ${response.status} : ${error.message}`);
-      }
-
-      setGameState([]);
-    } catch (err) {
-      console.error(err.message);
-
-      const errorMsg = document.getElementById("paused-overlay-error");
-      errorMsg.innerHTML = err.message;
-      errorMsg.classList.add("active");
-
-      setTimeout(() => {
-        errorMsg.classList.remove("active");
-      }, 5000);
-    }
-  }
-
   return (
     <div className="container flex row align-center justify-center">
       <div className="board flex column align-center">
@@ -154,9 +63,6 @@ export default function Sudoku() {
 
                 gameState={gameState}
                 pencilState={pencilState}
-
-                finishGame={finishGame}
-                exitGame={exitGame}
               />
 
             ) : gameState && gameState.length === 0 ? (

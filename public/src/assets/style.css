@@ -515,12 +515,18 @@ form label{
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, .9);
+  background-color: #fff;
   opacity: 0;
   pointer-events: none;
 }
 .popup h3{
+  margin-top: 0;
   font-size: 1.5rem;
+}
+.popup p{
+  margin-top: 0;
+  font-weight: 300;
+  color: var(--secondary-text);
 }
 .popup .btn-solid{
   width: 12rem;
