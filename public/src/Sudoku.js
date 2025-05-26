@@ -9,6 +9,7 @@ export default function Sudoku() {
   const [pencilState, setPencilMarks] = useState(false);
 
   const [authenticated, setAuthenticated] = useState(false);
+  const [playerBalance, setPlayerBalance] = useState(0);
 
   useEffect(() => {
     fetchState();
@@ -63,19 +64,22 @@ export default function Sudoku() {
 
                 gameState={gameState}
                 pencilState={pencilState}
-              />
 
+                playerBalance={playerBalance}
+              />
             ) : gameState && gameState.length === 0 ? (
               <Menu
                 fetchState={fetchState}
               />
-
             ) : (
               <div className="error-message">An error occurred loading the game board.</div>
             )}
           </>
           ) : (
-            <Auth fetchState={fetchState} />
+            <Auth
+              fetchState={fetchState}
+              setPlayerBalance={setPlayerBalance}
+            />
           )}
 
         <a id="powered-by-lootlocker" href="https://lootlocker.com/" target="_blank">Made using <span>Lootlocker</span></a>

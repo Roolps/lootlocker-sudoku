@@ -3,7 +3,6 @@ package lootlocker
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 )
@@ -70,9 +69,8 @@ func (c *Client) GetBalances(session, wallet string) (map[string]Balance, error)
 	}
 	balances := map[string]Balance{}
 	for _, b := range pl["balances"] {
-		balances[b.Currency.Code] = b
+		balances[b.Currency.ID] = b
 	}
-	log.Println(balances)
 	return balances, nil
 }
 

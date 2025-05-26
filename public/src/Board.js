@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Timer } from "./Timer";
 import { ActionButtons } from "./ActionButtons";
 
-export function Board({ setGameState, setPencilMarks, gameState, pencilState, exitGame, finishGame }) {
+export function Board({ setGameState, setPencilMarks, gameState, pencilState, exitGame, finishGame, playerBalance }) {
     const [isPaused, setIsPaused] = useState(false);
     const [selection, setSelection] = useState({ row: 0, col: 0 });
 
@@ -248,7 +248,7 @@ export function Board({ setGameState, setPencilMarks, gameState, pencilState, ex
             <div id="timer-row" className="flex row space-between align-center">
                 <div className="flex align-center">
                     <div id="player-tokens-icon"></div>
-                    <p id="player-tokens" className="flex align-center">0</p>
+                    <p id="player-tokens" className="flex align-center">{playerBalance}</p>
                 </div>
                 <div className="flex align-center">
                     <Timer
