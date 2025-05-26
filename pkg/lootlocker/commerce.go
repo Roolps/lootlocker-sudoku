@@ -8,7 +8,12 @@ import (
 	"time"
 )
 
-type Wallet struct{}
+type Wallet struct {
+	HolderID string `json:"holder_id"`
+	ID       string `json:"id"`
+	Type     string `json:"type"`
+	// modifiers? idk what they are :,)
+}
 
 // https://api.lootlocker.com/game/wallet/holder/<wallet_id>
 
@@ -69,4 +74,16 @@ func (c *Client) GetBalances(session, wallet string) (map[string]Balance, error)
 	}
 	log.Println(balances)
 	return balances, nil
+}
+
+func (c *Client) GetWalletForHolder(session, holder string) (*Wallet, error) {
+	raw, err := c.Request(http.MethodGet, fmt.Sprintf("game/wallet/holder/%v", holder), application_json, nil, map[string]string{"x-session-token": session})
+	if err != nil {
+		return nil, err
+	}
+	w := &Wallet{}
+	if err := json.Unmarshal(raw, w); err != nil {
+		return nil, err
+	}
+	return w, nil
 }

@@ -16,6 +16,8 @@ var (
 	wd     string
 
 	origin string
+
+	LOOTLOCKER_CURRENCY_ID string
 )
 
 func New(loggerprofile *logging.Profile, workingdir string, env map[string]string) {
@@ -29,6 +31,8 @@ func New(loggerprofile *logging.Profile, workingdir string, env map[string]strin
 	wd = workingdir
 	logger = loggerprofile
 	origin = env["ORIGIN"]
+
+	LOOTLOCKER_CURRENCY_ID = env["LOOTLOCKER_CURRENCY_ID"]
 }
 
 func Handle(w http.ResponseWriter, r *http.Request) {

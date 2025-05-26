@@ -224,6 +224,15 @@ func (e *gameEndpoint) Delete(s *session, w http.ResponseWriter, raw []byte) *ap
 		}
 
 		if allRowsValid && allColsValid {
+			wall, err := lootlockerClient.GetWalletForHolder(s.Token, s.PlayerID)
+			if err != nil {
+				return statusinternalservererror(err.Error())
+			}
+			// add reward to player wallet
+			if err := lootlockerClient.CreditBalance(s.Token, &lootlocker.Credit{Amount: "100", WalletID: wall.ID, CurrencyID: LOOTLOCKER_CURRENCY_ID}); err != nil {
+				return statusinternalservererror(err.Error())
+			}
+
 			// delete metadata value
 			if err := lootlockerClient.UpdatePlayerMetadata(s.Token, []lootlocker.Metadata{{
 				Key:    "current_state",

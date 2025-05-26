@@ -176,8 +176,8 @@ export function Board({ setGameState, setPencilMarks, gameState, pencilState, ex
         // if these are both valid then the solution is complete + valid!
         if (allRowsValid && allColsValid) {
             // run a complete game request and reset the game state
-            document.getElementById("game-finished-popup").classList.add("active")
-            setIsPaused(true)
+            document.getElementById("game-finished-popup").classList.add("active");
+            setIsPaused(true);
         }
     }
 
