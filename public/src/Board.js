@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Timer } from "./Timer";
 import { ActionButtons } from "./ActionButtons";
 
-export function Board({ setGameState, setPencilMarks, fetchPlayer, gameState, pencilState, exitGame, finishGame, playerBalance }) {
+export function Board({ setGameState, setPencilMarks, fetchPlayer, gameState, pencilState, exitGame, finishGame, playerBalance, initialStartTime }) {
     const [isPaused, setIsPaused] = useState(false);
     const [selection, setSelection] = useState({ row: 0, col: 0 });
 
@@ -255,6 +255,7 @@ export function Board({ setGameState, setPencilMarks, fetchPlayer, gameState, pe
                 <div className="flex align-center">
                     <Timer
                         isPaused={isPaused}
+                        initialStartTime={initialStartTime}
                     />
                     <button id="pause-btn" className={isPaused ? "paused" : ""} onClick={togglePause}></button>
                 </div>

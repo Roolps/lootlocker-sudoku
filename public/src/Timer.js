@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
 
 // GAME TIMER
-export function Timer({ isPaused }) {
+export function Timer({ isPaused, initialStartTime }) {
     const [seconds, setSeconds] = useState(0);
+
+    useEffect(() => {
+        const now = Math.floor(Date.now() / 1000);
+        setSeconds(now - initialStartTime);
+    }, []);
 
     useEffect(() => {
         if (isPaused) return;
