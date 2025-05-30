@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export function Auth({ fetchState, setPlayerBalance }) {
+export function Auth({ fetchState }) {
     const [authFormType, setAuthFormType] = useState("login");
 
     async function auth(formdata) {
@@ -10,7 +10,7 @@ export function Auth({ fetchState, setPlayerBalance }) {
         }
 
         try {
-            const response = await fetch(`/api/${formdata.get("action")}`, {
+            const response = await fetch(`/api/${authFormType}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -30,13 +30,10 @@ export function Auth({ fetchState, setPlayerBalance }) {
             const data = await response.json();
 
             // player balance is returned from the login call
-            setPlayerBalance(parseInt(data.data));
             fetchState();
         } catch (err) {
             // hide the loader
             if (loader) loader.classList.add("hidden");
-            console.error(err.message);
-
 
             const errorMsg = document.getElementById("login-error")
             errorMsg.innerHTML = err.message
@@ -50,7 +47,11 @@ export function Auth({ fetchState, setPlayerBalance }) {
 
 
     return (
-        <form className="flex column align-center" action={auth}>
+        <form className="flex column align-center" onSubmit={(e) => {
+            e.preventDefault();
+            const formdata = new FormData(e.target);
+            auth(formdata);
+        }}>
             <div className="flex align-center space-between radio-wrap">
                 <div className="backer" style={{ left: authFormType === "signup" ? ".3rem" : "50%" }}></div>
                 <label style={{ marginRight: ".15rem" }} className={`radio-label ${authFormType === "signup" ? "active" : ""}`}>
