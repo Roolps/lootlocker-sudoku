@@ -28,9 +28,55 @@ export function Generate({ difficultySelected }) {
                 }
             }
         }
-        console.log(JSON.stringify(grid))
+        populateGrid(grid);
     }
 
+    function populateGrid(grid) {
+        const nextEmptyCell = findNextEmptyCell(grid);
+        // if find next empty cell returns null then the grid is full
+        if (!nextEmptyCell) return true;
+        
+        // set row and column and get a new shuffled array
+        const { r, c } = nextEmptyCell;
+        var numbers = shuffle();
+
+        numbers.forEach((val) => {
+            console.log(validCellValue(grid, r, c, val))
+        })
+    }
+
+    function findNextEmptyCell(grid) {
+        // loop through the grid and find the first square with no value in
+        for (var r = 0; r < 9; r++) {
+            for (var c = 0; c < 9; c++) {
+                if (!grid[r][c].value) return { r, c };
+            }
+        }
+        return null;
+    }
+
+    function validCellValue(grid, row, col, val) {
+        // search down the column to check if the value is valid
+        for (let c = 0; c < 9; c++) {
+            if (grid[row][c].value === val) return false;
+        }
+
+        // search down the current row to check if the value is valid
+        for (let r = 0; r < 9; r++) {
+            if (grid[r][col].value === val) return false;
+        }
+
+        // search the current box to find out if the value is valid
+        const boxRow = row - (row % 3);
+        const boxCol = col - (col % 3);
+        for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 3; c++) {
+                if (grid[boxRow + r][boxCol + c].value === val) return false;
+            }
+        }
+
+        return true;
+    }
 
     function shuffle() {
         const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
