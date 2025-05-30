@@ -3,6 +3,7 @@ import { Auth } from "./Auth"
 import { Menu } from "./Menu"
 
 import { useState, useEffect } from 'react';
+import { Generate } from "./Generate";
 
 export default function Sudoku() {
   const [gameState, setGameState] = useState(null);
@@ -89,6 +90,8 @@ export default function Sudoku() {
     <div className="container flex row align-center justify-center">
       <div className="board flex column align-center">
         <h1>Lootlocker Sudoku</h1>
+        <Generate></Generate>
+
 
         {authenticated ?
           (<>
